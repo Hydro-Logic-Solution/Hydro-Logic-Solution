@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Hydro Logic Solution</title>
+<meta name="description" content="Talk to an engineer at Hydro Logic Solution about your water infrastructure project.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<nav class="nav" style="padding-inline:clamp(20px,5vw,72px);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+  <a href="index.html" class="nav-brand" style="white-space:nowrap;display:flex;align-items:center;gap:10px">
+    <img src="images/logo.jpg" alt="" style="height:36px;width:auto;display:block">
+    Hydro Logic Solution
+  </a>
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="projects.html">Labs</a>
+    <a href="about.html">About</a>
+    <a href="contact.html" aria-current="page">Contact</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <section style="padding:calc(3*28px) 0 48px 0">
+    <span class="kicker" style="margin:0 0 16px">Contact</span>
+    <h1 style="font-size:clamp(36px,5vw,60px);line-height:1.06;letter-spacing:-.02em;margin:0;max-width:20ch">Talk to an engineer, not a call center.</h1>
+  </section>
+
+  <hr class="hr" style="margin:0">
+
+  <section style="display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:48px clamp(24px,5vw,96px);padding:56px 0 72px 0;align-items:start">
+    <!-- Point this form's action at your Formspree endpoint: https://formspree.io/f/YOUR_FORM_ID -->
+    <form style="display:grid;gap:20px" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" data-ajax>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+        <div class="field"><label for="c-name">Name</label><input class="input" id="c-name" name="name" placeholder="Jane Rivera" required></div>
+        <div class="field"><label for="c-company">Company</label><input class="input" id="c-company" name="company" placeholder="Cedar Creek Township"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+        <div class="field"><label for="c-email">Email</label><input class="input" id="c-email" name="email" type="email" placeholder="jane@example.com" required></div>
+        <div class="field"><label for="c-phone">Phone</label><input class="input" id="c-phone" name="phone" type="tel" placeholder="(555) 555-0100"></div>
+      </div>
+      <div class="field"><label for="c-topic">What can we help with?</label>
+        <select class="input" id="c-topic" name="topic">
+          <option>Hydraulics &amp; Hydrology</option>
+          <option>Drainage Design</option>
+          <option>Irrigation Systems</option>
+          <option>Water &amp; Wastewater Treatment</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="field"><label for="c-message">Message</label><textarea class="input" id="c-message" name="message" rows="5" placeholder="Tell us about your project, site, or timeline." required></textarea></div>
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true">
+      <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+      <p class="form-status" role="status" hidden></p>
+    </form>
+
+    <div>
+      <div style="margin-bottom:32px">
+        <p style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:20px;margin:0 0 12px">Head Office</p>
+        <p style="font-size:15px;line-height:1.7;color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0">Koh Pich, Street Sopheak Mongkol Rd<br>Phnom Penh 120101, Cambodia</p>
+      </div>
+      <div style="margin-bottom:32px">
+        <p style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:20px;margin:0 0 12px">Reach Us</p>
+        <p style="font-size:15px;line-height:1.7;color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0">(+855) 89 300 487<br>(+855) 87 224 472<br><a href="mailto:sereyvatanakky@gmail.com">sereyvatanakky@gmail.com</a></p>
+      </div>
+      <div style="margin-bottom:24px">
+        <p style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:20px;margin:0 0 12px">Hours</p>
+        <p style="font-size:15px;line-height:1.7;color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0">Monday – Friday, 8:00am – 5:00pm</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer style="border-top:2px solid var(--color-divider)">
+  <div class="container" style="padding-top:32px;padding-bottom:32px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:color-mix(in srgb, var(--color-text) 70%, transparent)">
+    <span>© 2026 Hydro Logic Solution. All rights reserved. Hydraulic &amp; hydrology consulting, drainage design, irrigation, water &amp; wastewater treatment.</span>
+    <span style="display:flex;gap:16px;flex-wrap:wrap">
+      <a href="index.html" style="color:inherit">Home</a>
+      <a href="services.html" style="color:inherit">Services</a>
+    </span>
+  </div>
+</footer>
+
+<script src="js/forms.js"></script>
+</body>
+</html>

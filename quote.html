@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Get a Quote — Hydro Logic Solution</title>
+<meta name="description" content="Request a quote from Hydro Logic Solution for hydraulics and hydrology, drainage, irrigation, or water and wastewater treatment work.">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<nav class="nav" style="padding-inline:clamp(20px,5vw,72px);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+  <a href="index.html" class="nav-brand" style="white-space:nowrap;display:flex;align-items:center;gap:10px">
+    <img src="images/logo.jpg" alt="" style="height:36px;width:auto;display:block">
+    Hydro Logic Solution
+  </a>
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="products.html">Products</a>
+    <a href="projects.html">Labs</a>
+    <a href="about.html">About</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="quote.html" class="btn btn-primary" aria-current="page" style="white-space:nowrap">Get a Quote</a>
+</nav>
+
+<div class="container">
+
+  <section style="padding:calc(3*28px) 0 48px 0">
+    <span class="kicker" style="margin:0 0 16px">Get a Quote</span>
+    <h1 style="font-size:clamp(36px,5vw,60px);line-height:1.06;letter-spacing:-.02em;margin:0;max-width:18ch">Tell us about your project.</h1>
+    <p style="font-size:17px;line-height:1.7;color:color-mix(in srgb, var(--color-text) 78%, transparent);max-width:56ch;margin:24px 0 0">Fill in what you know — we'll follow up with the questions that fill in the rest.</p>
+  </section>
+
+  <hr class="hr" style="margin:0">
+
+  <section style="display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:48px clamp(24px,5vw,96px);padding:56px 0 72px 0;align-items:start">
+    <!-- Point this form's action at your Formspree endpoint: https://formspree.io/f/YOUR_FORM_ID -->
+    <form style="display:grid;gap:20px" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" data-ajax>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+        <div class="field"><label for="q-name">Name</label><input class="input" id="q-name" name="name" placeholder="Jane Rivera" required></div>
+        <div class="field"><label for="q-company">Company / Agency</label><input class="input" id="q-company" name="company" placeholder="Cedar Creek Township"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+        <div class="field"><label for="q-email">Email</label><input class="input" id="q-email" name="email" type="email" placeholder="jane@example.com" required></div>
+        <div class="field"><label for="q-phone">Phone</label><input class="input" id="q-phone" name="phone" type="tel" placeholder="(555) 555-0100"></div>
+      </div>
+      <div class="field"><label for="q-service">Service needed</label>
+        <select class="input" id="q-service" name="service">
+          <option>Hydraulics &amp; Hydrology Modeling</option>
+          <option>Drainage Design</option>
+          <option>Irrigation Systems</option>
+          <option>Water &amp; Wastewater Treatment</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+        <div class="field"><label for="q-location">Project location</label><input class="input" id="q-location" name="location" placeholder="City, State"></div>
+        <div class="field"><label for="q-timeline">Timeline</label>
+          <select class="input" id="q-timeline" name="timeline">
+            <option>As soon as possible</option>
+            <option>Within 3 months</option>
+            <option>Within a year</option>
+            <option>Just exploring</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label for="q-budget">Estimated budget range</label>
+        <select class="input" id="q-budget" name="budget">
+          <option>Under $25,000</option>
+          <option>$25,000 – $100,000</option>
+          <option>$100,000 – $500,000</option>
+          <option>$500,000+</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="field"><label for="q-details">Project description</label><textarea class="input" id="q-details" name="details" rows="5" placeholder="Site size, current problem, permits already in hand, anything else relevant." required></textarea></div>
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true">
+      <button type="submit" class="btn btn-primary btn-block">Request a Quote</button>
+      <p class="form-status" role="status" hidden></p>
+    </form>
+
+    <div>
+      <p style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:20px;margin:0 0 20px">What happens next</p>
+      <div style="display:grid;gap:20px">
+        <div style="display:flex;gap:16px;align-items:baseline">
+          <p style="display:flex;align-items:center;gap:8px;font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:14px;color:var(--color-text);margin:0;flex:none"><span style="width:8px;height:8px;background:var(--color-accent);display:inline-block"></span>01</p>
+          <p style="font-size:15px;line-height:1.6;color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0">An engineer reviews your request within one business day.</p>
+        </div>
+        <div style="display:flex;gap:16px;align-items:baseline">
+          <p style="display:flex;align-items:center;gap:8px;font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:14px;color:var(--color-text);margin:0;flex:none"><span style="width:8px;height:8px;background:var(--color-accent);display:inline-block"></span>02</p>
+          <p style="font-size:15px;line-height:1.6;color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0">We schedule a short call to scope the project.</p>
+        </div>
+        <div style="display:flex;gap:16px;align-items:baseline">
+          <p style="display:flex;align-items:center;gap:8px;font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:14px;color:var(--color-text);margin:0;flex:none"><span style="width:8px;height:8px;background:var(--color-accent);display:inline-block"></span>03</p>
+          <p style="font-size:15px;line-height:1.6;color:color-mix(in srgb, var(--color-text) 78%, transparent);margin:0">You receive a scoped proposal within 5 business days.</p>
+        </div>
+      </div>
+      <hr class="hr" style="margin:32px 0">
+      <p style="font-size:14px;color:color-mix(in srgb, var(--color-text) 70%, transparent);margin:0">Prefer to talk first? Call (555) 555-0123 or <a href="contact.html">reach out here</a>.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer style="border-top:2px solid var(--color-divider)">
+  <div class="container" style="padding-top:32px;padding-bottom:32px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:color-mix(in srgb, var(--color-text) 70%, transparent)">
+    <span>© 2026 Hydro Logic Solution. All rights reserved. Hydraulic &amp; hydrology consulting, drainage design, irrigation, water &amp; wastewater treatment.</span>
+    <span style="display:flex;gap:16px;flex-wrap:wrap">
+      <a href="index.html" style="color:inherit">Home</a>
+      <a href="services.html" style="color:inherit">Services</a>
+      <a href="contact.html" style="color:inherit">Contact</a>
+    </span>
+  </div>
+</footer>
+
+<script src="js/forms.js"></script>
+</body>
+</html>

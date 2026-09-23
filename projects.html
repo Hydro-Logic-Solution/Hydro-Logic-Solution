@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Labs — Hydro Logic Solution</title>
+<meta name="description" content="Free interactive hydraulics, hydrology and drainage-design tools built by Hydro Logic Solution — play with the water cycle, climate, river structures, a real flood-pulse lake system, and MSMA2 stormwater design.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<nav class="nav" style="padding-inline:clamp(20px,5vw,72px);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+  <a href="index.html" class="nav-brand" style="white-space:nowrap;display:flex;align-items:center;gap:10px">
+    <img src="images/logo.jpg" alt="" style="height:36px;width:auto;display:block">
+    Hydro Logic Solution
+  </a>
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="projects.html" aria-current="page">Labs</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="contact.html" class="btn btn-primary" style="white-space:nowrap">Get a Quote</a>
+</nav>
+
+<div class="container">
+
+  <section style="padding:calc(3*28px) 0 32px 0">
+    <span class="kicker" style="margin:0 0 16px">Labs</span>
+    <h1 style="font-size:clamp(36px,5vw,60px);line-height:1.06;letter-spacing:-.02em;margin:0;max-width:26ch">Learn the physics we design with — by playing with it.</h1>
+    <p style="font-size:15.5px;line-height:1.7;color:color-mix(in srgb, var(--color-text) 78%, transparent);max-width:60ch;margin:20px 0 0">Free, interactive models covering the hydraulics and hydrology behind our work — drag a slider and watch the real equations respond. No download, no signup.</p>
+  </section>
+
+  <section style="padding:0 0 32px 0">
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <span class="tag tag-accent">All</span>
+      <span class="tag tag-neutral">Hydrology</span>
+      <span class="tag tag-neutral">Hydraulics</span>
+      <span class="tag tag-neutral">Climate</span>
+      <span class="tag tag-neutral">Drainage design</span>
+    </div>
+  </section>
+
+  <hr class="hr" style="margin:0">
+
+  <section style="padding:48px 0 72px 0">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
+
+      <a class="card" href="labs/water-cycle.html" style="text-decoration:none;color:inherit">
+        <div style="margin:calc(-1*var(--space-4)) calc(-1*var(--space-4)) var(--space-3) calc(-1*var(--space-4));aspect-ratio:16/10;background:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-size:40px">💧</div>
+        <div class="card-kicker">Hydrology</div>
+        <div class="card-title">The Water Cycle</div>
+        <p class="card-body">A guided tour of evaporation, clouds, rain and runoff, plus a playground to test how climate and land use change the balance.</p>
+      </a>
+
+      <a class="card" href="labs/earth-climate-lab.html" style="text-decoration:none;color:inherit">
+        <div style="margin:calc(-1*var(--space-4)) calc(-1*var(--space-4)) var(--space-3) calc(-1*var(--space-4));aspect-ratio:16/10;background:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-size:40px">🌍</div>
+        <div class="card-kicker">Climate</div>
+        <div class="card-title">Earth Climate Lab</div>
+        <p class="card-body">A rotating 3D globe. Slide between El Niño and La Niña, or fast-forward through climate-change scenarios to 2100.</p>
+      </a>
+
+      <a class="card" href="labs/river-hydraulics-lab.html" style="text-decoration:none;color:inherit">
+        <div style="margin:calc(-1*var(--space-4)) calc(-1*var(--space-4)) var(--space-3) calc(-1*var(--space-4));aspect-ratio:16/10;background:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-size:40px">🌊</div>
+        <div class="card-kicker">Hydraulics</div>
+        <div class="card-title">River Hydraulics Lab</div>
+        <p class="card-body">Design a channel or drop in a weir, gate or spillway, and watch the hydraulic jump, backwater and energy loss respond live.</p>
+      </a>
+
+      <a class="card" href="labs/tonle-sap-learning-lab.html" style="text-decoration:none;color:inherit">
+        <div style="margin:calc(-1*var(--space-4)) calc(-1*var(--space-4)) var(--space-3) calc(-1*var(--space-4));aspect-ratio:16/10;background:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-size:40px">🏞️</div>
+        <div class="card-kicker">River System</div>
+        <div class="card-title">Tonle Sap Virtual</div>
+        <p class="card-body">A 3D world of Tonle Sap Lake System consiste water level, Discharge, Reverflow, Landuse Change, etc.</p>
+      </a>
+
+      <a class="card" href="labs/hydraulic-lab/index.html" style="text-decoration:none;color:inherit">
+        <div style="margin:calc(-1*var(--space-4)) calc(-1*var(--space-4)) var(--space-3) calc(-1*var(--space-4));aspect-ratio:16/10;background:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-size:40px" aria-hidden="true">🔬</div>
+        <div class="card-kicker">Hydraulics · Virtual experiments</div>
+        <div class="card-title">Hydraulic Lab</div>
+        <p class="card-body">Explore Manning and Chezy flow, specific energy, flow over humps, and hydraulic jumps in a 3D laboratory flume. Take readings, compare trials, and export results.</p>
+      </a>
+
+      <a class="card" href="labs/coastal-model-studio/index.html" style="text-decoration:none;color:inherit">
+        <div style="margin:calc(-1*var(--space-4)) calc(-1*var(--space-4)) var(--space-3) calc(-1*var(--space-4));aspect-ratio:16/10;background:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-size:40px" aria-hidden="true">🏖️</div>
+        <div class="card-kicker">Coastal · Virtual experiments</div>
+        <div class="card-title">Caostal Lab</div>
+        <p class="card-body">17th Street Canal Studio, Inspired by Briggs · USACE / ERDC · 2013.</p>
+      </a>
+
+    </div>
+  </section>
+
+</div>
+
+<section style="background:var(--color-accent);color:var(--color-bg)">
+  <div class="container" style="padding-top:64px;padding-bottom:64px">
+    <h3 style="font-size:clamp(32px,4vw,48px);line-height:1.1;letter-spacing:-.015em;margin:0;max-width:20ch">Need this level of analysis on your own project?</h3>
+    <div style="margin-top:28px">
+      <a href="contact.html" class="btn btn-ghost" style="color:var(--color-bg);border-color:var(--color-bg)">Request a Quote</a>
+    </div>
+  </div>
+</section>
+
+<footer style="border-top:2px solid var(--color-divider)">
+  <div class="container" style="padding-top:32px;padding-bottom:32px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:color-mix(in srgb, var(--color-text) 70%, transparent)">
+    <span>© 2026 Hydro Logic Solution. All rights reserved. Hydraulic &amp; hydrology consulting, drainage design, irrigation, water &amp; wastewater treatment.</span>
+    <span style="display:flex;gap:16px;flex-wrap:wrap">
+      <a href="index.html" style="color:inherit">Home</a>
+      <a href="services.html" style="color:inherit">Services</a>
+      <a href="contact.html" style="color:inherit">Contact</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>

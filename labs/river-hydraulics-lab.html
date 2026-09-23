@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'">
+<title>River hydraulics lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#e8f1f7; --ink:#0a2540; --muted:#48627a; --line:#c2d4e2;
+  --chip:#ffffff; --panel:#ffffff; --accent:#0b5c9e; --accent-ink:#ffffff;
+  --warn:#b45309; --bad:#b42318; --good:#15803d;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#050f1c; --ink:#e6f2fb; --muted:#93aec4; --line:#1c3550;
+    --chip:#0b1c2f; --panel:#0a1a2b; --accent:#8fd6f7; --accent-ink:#04141f;
+    --warn:#f5b453; --bad:#ff8a80; --good:#6ee7a0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#050f1c; --ink:#e6f2fb; --muted:#93aec4; --line:#1c3550;
+  --chip:#0b1c2f; --panel:#0a1a2b; --accent:#8fd6f7; --accent-ink:#04141f;
+  --warn:#f5b453; --bad:#ff8a80; --good:#6ee7a0;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Bricolage Grotesque','Noto Sans SC',system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.45}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.app{max-width:1180px;margin:0 auto;padding:16px 14px 30px;display:flex;flex-direction:column;gap:12px}
+.left,.right{display:contents}
+.top{order:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.tabs{order:1}.stage{order:2}.p1{order:3}.p2{order:4}.p3{order:5}.p4{order:6}.credit{order:9}
+h1{margin:0;font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.01em}
+.sub{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:58ch}
+.lang{flex:none;min-height:40px;min-width:56px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--chip);font-weight:700;font-size:14px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--chip)}
+.tabs button{min-height:42px;border:0;border-radius:999px;background:transparent;font-weight:700;font-size:14.5px}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+.stage{position:sticky;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:6;border-radius:22px;overflow:hidden;
+  background:#0c1f33;border:1px solid rgba(143,214,247,.2);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.stage svg{display:block;width:100%;height:auto}
+@media (max-height:560px){.stage{position:relative;top:auto}}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px}
+.panel h2{margin:0 0 8px;font-size:18px}
+.panel h3{margin:14px 0 6px;font-size:14.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chips button{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--chip);font-weight:600;font-size:13.5px}
+.chips button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chips.small button{min-height:32px;padding:0 10px;font-size:12.5px;font-weight:500}
+.chips.small button b{font-weight:700;margin-left:4px;color:var(--muted)}
+.row{margin:0 0 8px}
+.row label{display:flex;justify-content:space-between;align-items:baseline;font-weight:700;font-size:14px}
+.row output{font-variant-numeric:tabular-nums;color:var(--accent)}
+input[type=range]{display:block;width:100%;height:30px;margin:2px 0 0;accent-color:var(--accent);background:transparent}
+.grp{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.grp>small{display:block;color:var(--muted);font-size:12px;margin:0 0 6px}
+
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.card{border:1px solid var(--line);border-radius:14px;padding:9px 11px;background:var(--chip);min-width:0}
+.card small{display:block;color:var(--muted);font-size:12px}
+.card strong{display:block;font-size:18px;line-height:1.3;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.card em{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
+.card.ok strong{color:var(--good)}.card.warn strong{color:var(--warn)}.card.bad strong{color:var(--bad)}
+.msgs{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.msgs li{display:grid;grid-template-columns:18px 1fr;gap:8px;font-size:14px}
+.msgs li::before{content:"";width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--accent)}
+.msgs li.warn::before{background:var(--warn)}.msgs li.bad::before{background:var(--bad)}.msgs li.ok::before{background:var(--good)}
+.chart{display:block;width:100%;height:auto;color:var(--muted);margin:0 0 6px}
+.chart text{font-family:inherit;font-size:10px;fill:currentColor}
+.fine{margin:10px 0 0;color:var(--muted);font-size:12.5px}
+.notes{margin:12px 0 0;border-top:1px solid var(--line);padding-top:10px}
+.notes summary{cursor:pointer;font-weight:700;font-size:14px;min-height:32px;display:flex;align-items:center}
+.notes p{margin:8px 0 0;font-size:13.5px;color:var(--muted);max-width:64ch}
+.notes b{color:var(--ink)}
+.credit{margin:0;text-align:center;color:var(--muted);font-size:12px}
+
+#view .flow{animation:flowdash 1.4s linear infinite}
+#view .wave{animation:wave 3.4s ease-in-out infinite alternate}
+#view .foamdot{animation:foam 1.1s ease-in-out infinite alternate}
+#view .drift{animation:drift 3.6s linear infinite}
+@keyframes flowdash{to{stroke-dashoffset:-32}}
+@keyframes wave{from{transform:translateY(0)}to{transform:translateY(-1.6px)}}
+@keyframes foam{from{opacity:.35}to{opacity:.95}}
+@keyframes drift{0%{transform:translateX(0);opacity:0}15%{opacity:.9}85%{opacity:.9}100%{transform:translateX(70px);opacity:0}}
+@media (prefers-reduced-motion:reduce){#view .flow,#view .wave,#view .foamdot,#view .drift{animation:none}}
+
+@media (min-width:900px){
+  .app{padding:28px 24px 40px;gap:14px 28px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(340px,.9fr);align-items:start}
+  .top{grid-column:1 / -1}
+  .left{display:flex;flex-direction:column;gap:12px;position:sticky;top:20px}
+  .right{display:flex;flex-direction:column;gap:12px}
+  .stage{position:relative;top:auto}
+  h1{font-size:34px}
+}
+
+.chips.small button i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:1px solid rgba(0,0,0,.25)}
+.chips.small button[aria-pressed="true"] b{color:inherit;opacity:.8}
+
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <div><h1 id="h1"></h1><p class="sub" id="sub"></p></div>
+    <button class="lang" id="lang" type="button" aria-label="Switch language">中文</button>
+  </header>
+
+  <div class="left">
+    <section class="stage" id="stage"><div id="view" role="img"></div></section>
+    
+  </div>
+
+  <div class="right">
+    <nav class="tabs" id="tabs"></nav>
+
+    <section class="panel p1" id="chCtl">
+      <div class="chips" id="shapes"></div>
+      <div id="chSliders"></div>
+      <div class="grp"><small id="nHelp"></small><div class="chips small" id="nPre"></div></div>
+      <div class="grp"><div class="chips" id="modes"></div><div id="chSliders2"></div></div>
+    </section>
+    <section class="panel p2" id="chRes">
+      <h2 id="chResH"></h2>
+      <div class="cards" id="chCards"></div>
+      <ul class="msgs" id="chMsgs"></ul>
+      <h3 id="eyH"></h3><svg class="chart" id="eyChart" viewBox="0 0 320 170"></svg>
+      <h3 id="rtH"></h3><svg class="chart" id="rtChart" viewBox="0 0 320 170"></svg>
+      <details class="notes"><summary id="chNSum"></summary><div id="chNBody"></div></details>
+    </section>
+
+    <section class="panel p1" id="stCtl" hidden>
+      <div class="chips" id="stTypes"></div>
+      <div id="stSliders"></div>
+      <div class="grp"><small id="matHelp2"></small><div class="chips small" id="stMat"></div></div>
+      <div class="grp"><small id="tcHead"></small><div class="chips small" id="tcMode"></div><div id="stSliders2"></div></div>
+    </section>
+    <section class="panel p2" id="stRes" hidden>
+      <h2 id="stResH"></h2>
+      <div class="cards" id="stCards"></div>
+      <ul class="msgs" id="stMsgs"></ul>
+      <h3 id="hqH"></h3><svg class="chart" id="hqChart" viewBox="0 0 320 170"></svg>
+      <details class="notes"><summary id="stNSum"></summary><div id="stNBody"></div></details>
+    </section>
+    <p class="credit" id="credit"></p>
+  </div>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ================= hydraulics core (SI units) ================= */
+var g = 9.81, RHO = 1000, RHOS = 2650, THETA_C = 0.047;
+function clamp(x,a,b){ return x < a ? a : (x > b ? b : x); }
+function bisect(f, lo, hi, it){
+  var flo = f(lo);
+  for(var i=0;i<(it||80);i++){
+    var mid = 0.5*(lo+hi), fm = f(mid);
+    if((fm < 0) === (flo < 0)){ lo = mid; flo = fm; } else hi = mid;
+  }
+  return 0.5*(lo+hi);
+}
+
+/* cross-section geometry: shape in rect | trap | tri | circ */
+function geom(shape,p,y){
+  var A, P, T;
+  if(shape === 'rect'){ A = p.b*y; P = p.b + 2*y; T = p.b; }
+  else if(shape === 'trap'){ var s = Math.sqrt(1+p.z*p.z); A = (p.b + p.z*y)*y; P = p.b + 2*y*s; T = p.b + 2*p.z*y; }
+  else if(shape === 'tri'){ var s2 = Math.sqrt(1+p.z*p.z); A = p.z*y*y; P = 2*y*s2; T = 2*p.z*y; }
+  else {
+    var D = p.D;
+    if(y >= D){ A = Math.PI*D*D/4; P = Math.PI*D; T = 0; }
+    else { var th = 2*Math.acos(1-2*y/D); A = D*D/8*(th-Math.sin(th)); P = D*th/2; T = D*Math.sin(th/2); }
+  }
+  return {A:A, P:P, T:T, R:P > 0 ? A/P : 0};
+}
+function manningQ(shape,p,y,n,S){ var G = geom(shape,p,y); return G.A*Math.pow(G.R,2/3)*Math.sqrt(S)/n; }
+
+function normalDepth(shape,p,Q,n,S,ymax){
+  var f = function(y){ return manningQ(shape,p,y,n,S) - Q; };
+  if(shape === 'circ'){
+    var ypk = 0.938*p.D, Qpk = manningQ(shape,p,ypk,n,S);
+    if(Q > Qpk) return {y:p.D, full:true, Qmax:Qpk};
+    return {y:bisect(f,1e-6,ypk), full:false, Qmax:Qpk};
+  }
+  var hi = Math.max(1, ymax || 1);
+  while(f(hi) < 0 && hi < 1e5) hi *= 2;
+  return {y:bisect(f,1e-6,hi), full:false};
+}
+function criticalDepth(shape,p,Q){
+  var f = function(y){ var G = geom(shape,p,y); return G.A*G.A*G.A/G.T - Q*Q/g; };
+  if(shape === 'circ'){
+    var top = p.D*0.9999; if(f(top) < 0) return null;
+    return bisect(f,1e-6,top);
+  }
+  var hi = 1; while(f(hi) < 0 && hi < 1e5) hi *= 2;
+  return bisect(f,1e-6,hi);
+}
+function froude(shape,p,y,V){ var G = geom(shape,p,y); if(!(G.T > 0)) return NaN; return V/Math.sqrt(g*G.A/G.T); }
+
+function calcChannel(s){
+  var p = {b:s.b, z:s.z, D:s.D}, S0 = s.S0/1000, n = s.n;
+  var ymax = s.shape === 'circ' ? s.D : s.bank, o = {}, y, Q, full = false;
+  if(s.mode === 'depth'){
+    y = Math.min(s.y, ymax); Q = manningQ(s.shape,p,y,n,S0);
+    if(s.shape === 'circ' && y >= s.D) full = true;
+  } else {
+    Q = s.Qset; var nd = normalDepth(s.shape,p,Q,n,S0,ymax); y = nd.y; full = nd.full; o.Qmax = nd.Qmax;
+  }
+  var G = geom(s.shape,p,y), V = Q/G.A;
+  var yc = criticalDepth(s.shape,p,Q);
+  var Fr = full ? NaN : froude(s.shape,p,y,V);
+  var tau0 = RHO*g*G.R*S0, tauC = THETA_C*(RHOS-RHO)*g*(s.d50/1000);
+  var E = y + V*V/(2*g);
+  var Sc = null;
+  if(yc !== null){ var Gc = geom(s.shape,p,yc), Vc = Q/Gc.A; Sc = Math.pow(n*Vc/Math.pow(Gc.R,2/3),2); }
+  var Qfull = s.shape === 'circ' ? manningQ('circ',p,s.D,n,S0) : null;
+  o.y = y; o.Q = Q; o.A = G.A; o.P = G.P; o.R = G.R; o.T = G.T; o.V = V; o.Fr = Fr; o.yc = yc; o.E = E;
+  o.tau0 = tau0; o.tauC = tauC; o.Sc = Sc; o.S0 = S0; o.full = full; o.ymax = ymax; o.Qfull = Qfull;
+  o.freeboard = s.shape === 'circ' ? s.D - y : s.bank - y; o.over = s.shape !== 'circ' && y > s.bank + 1e-9;
+  o.exceeds = (s.mode === 'flow' && s.shape === 'circ' && full);
+  return o;
+}
+
+/* ---------- rectangular-channel helpers used by structures ---------- */
+function rectNormal(Q,B,n,S){ return normalDepth('rect',{b:B},Q,n,S,5).y; }
+function specE(y,q){ return y + q*q/(2*g*y*y); }
+function subDepth(E,q){ var yc = Math.cbrt(q*q/g); return bisect(function(y){ return specE(y,q)-E; }, yc, Math.max(E,yc*1.0001), 90); }
+function superDepth(E,q){ var yc = Math.cbrt(q*q/g); return bisect(function(y){ return E - specE(y,q); }, 1e-7, yc, 90); }
+function conjugate(y,q){ var Fr = q/y/Math.sqrt(g*y); return 0.5*y*(Math.sqrt(1+8*Fr*Fr)-1); }
+function jumpInfo(yt,q,ytw){
+  var Fr = q/yt/Math.sqrt(g*yt), y2 = conjugate(yt,q), ratio = ytw/y2;
+  var type = Fr < 1.7 ? 'undular' : (Fr < 2.5 ? 'weak' : (Fr < 4.5 ? 'osc' : (Fr <= 9 ? 'steady' : 'strong')));
+  var state = ratio < 0.97 ? 'swept' : (ratio > 1.10 ? 'drowned' : 'toe');
+  var loss = Math.pow(y2-yt,3)/(4*yt*y2);
+  return {Fr:Fr, y2:y2, ratio:ratio, type:type, state:state, loss:loss, Lj:6*y2};
+}
+
+/* gradually varied flow, M1 backwater upstream of a structure (rectangular channel) */
+function backwater(B,n,S0,Q,y1,yn){
+  var q = Q/B, pts = [{d:0,y:y1}], y = y1, d = 0, target = yn + 0.02*(y1-yn);
+  var f = function(yy){
+    var A = B*yy, R = A/(B+2*yy), Sf = Math.pow(n*Q/(A*Math.pow(R,2/3)),2), Fr2 = q*q/(g*yy*yy*yy);
+    return (S0-Sf)/(1-Fr2);
+  };
+  var guard = 0, done = true;
+  while(y > target){
+    var sl = f(y); if(!(sl > 0)) break;
+    var h = Math.min(250,Math.max(0.05,0.03*(y-yn)/sl));
+    var k1 = f(y), k2 = f(y-0.5*h*k1), k3 = f(y-0.5*h*k2), k4 = f(y-h*k3);
+    y -= h*(k1+2*k2+2*k3+k4)/6; d += h; pts.push({d:d,y:y}); guard++;
+    if(d > 100000 || guard > 3000){ done = false; break; }
+  }
+  return {pts:pts, L:d, complete:done};
+}
+
+/* ---------- structures ---------- */
+var VILLEMONTE_N = {sharp:1.5, vnotch:2.5};
+function headSolve(Qt, qfree, H2, m){
+  var f = function(H){
+    var Qf = qfree(H);
+    if(H2 > 0){ var r = H2/H; if(r >= 1) return 0; Qf *= Math.pow(1-Math.pow(r,m),0.385); }
+    return Qf;
+  };
+  var lo = Math.max(H2,0)*1.000001 + 1e-6, hi = lo + 1;
+  while(f(hi) < Qt && hi < 1e4) hi *= 2;
+  return bisect(function(H){ return f(H) - Qt; }, lo, hi, 90);
+}
+function calcStruct(s){
+  var B = s.B, Q = s.Q, n = s.n, S0 = s.S0/1000, q = Q/B, type = s.st;
+  var yn = rectNormal(Q,B,n,S0), yc = Math.cbrt(q*q/g), Frn = q/yn/Math.sqrt(g*yn);
+  var ytw = s.twAuto ? yn : s.twMan;
+  var r = {type:type, Q:Q, B:B, q:q, yn:yn, yc:yc, Frn:Frn, ytw:ytw, warn:[]};
+  var P = s.P, H = 0, y1, E1, yt, twOverCrest = 0;
+  if(type === 'gate'){
+    var a = s.a, y2 = s.Cc*a, V2 = q/y2, Fr2 = V2/Math.sqrt(g*y2);
+    r.a = a; r.yt = y2;
+    if(Fr2 <= 1){ r.ctrl = false; y1 = yn; r.warn.push('gateFree'); }
+    else {
+      var V3 = q/ytw, y2c = 0.5*y2*(Math.sqrt(1+8*Fr2*Fr2)-1), ys2 = ytw*ytw + 2*q*(V3-V2)/g;
+      // momentum balance between the vena contracta and the tailwater section: a drowned jump raises the pressure depth ys above y2
+      var ys = ytw > y2c ? Math.sqrt(Math.max(ys2,y2*y2)) : y2;
+      r.submerged = ys > y2*1.0001; r.ys = ys; r.ctrl = true;
+      var E = ys + V2*V2/(2*g); y1 = subDepth(E,q);
+      if(y1 <= a) { r.warn.push('gateOut'); }
+      r.Cd = Q/(B*a*Math.sqrt(2*g*y1));
+    }
+    E1 = specE(y1,q); yt = y2;
+  } else {
+    var qfree, m = 1.5, L = s.L, Hh;
+    if(type === 'sharp'){
+      var nc = L < B - 1e-9 ? 2 : 0; r.contracted = nc > 0;
+      qfree = function(H){ var Cd = 0.611 + 0.075*H/P, Le = Math.max(1e-6, L - 0.1*nc*H); return (2/3)*Cd*Math.sqrt(2*g)*Le*Math.pow(H,1.5); };
+      twOverCrest = Math.max(0, ytw - P); Hh = headSolve(Q,qfree,twOverCrest,VILLEMONTE_N.sharp); r.L = L;
+    } else if(type === 'vnotch'){
+      var tn = Math.tan(s.theta*Math.PI/360);
+      qfree = function(H){ return (8/15)*0.58*Math.sqrt(2*g)*tn*Math.pow(H,2.5); };
+      twOverCrest = Math.max(0, ytw - P); Hh = headSolve(Q,qfree,twOverCrest,VILLEMONTE_N.vnotch);
+      r.notchTop = 2*Hh*tn; if(r.notchTop > B) r.warn.push('notchWide');
+    } else if(type === 'broad' || type === 'check'){
+      var Cd = s.Cd; qfree = function(H){ return Cd*Math.pow(2/3,1.5)*Math.sqrt(g)*B*Math.pow(H,1.5); };
+      Hh = headSolve(Q,qfree,0,1.5); twOverCrest = Math.max(0, ytw - P); r.HL = Hh/s.Lc;
+      if(twOverCrest > 0.8*Hh) r.warn.push('drownedCrest');
+    } else { // ogee
+      var He = Math.pow(Q/(s.C*B),2/3); r.He = He;
+      var yy = bisect(function(y){ return specE(y,q) - (P+He); }, Math.cbrt(q*q/g)*1.0000001, P+He, 90);
+      Hh = yy - P; twOverCrest = Math.max(0, ytw - P); r.HdRatio = He/s.Hd;
+      if(twOverCrest > 0) r.warn.push('drownedCrest');
+    }
+    H = Hh; y1 = P + H; r.H = H; r.P = P; r.twOverCrest = twOverCrest;
+    r.sub = twOverCrest > 0 && (type === 'sharp' || type === 'vnotch');
+    if(type === 'sharp' || type === 'vnotch'){ if(H < 0.06) r.warn.push('lowHead'); if(type === 'sharp' && H/P > 2) r.warn.push('highRatio'); }
+    if(type === 'broad' || type === 'check'){ r.HL = H/s.Lc; if(r.HL < 0.08 || r.HL > 0.5) r.warn.push('broadRange'); }
+    E1 = specE(y1,q); yt = superDepth(E1,q);
+  }
+  r.y1 = y1; r.E1 = E1; r.yt = yt;
+  r.V1 = q/y1; r.Fr1 = r.V1/Math.sqrt(g*y1); r.afflux = y1 - yn;
+  r.Etw = specE(ytw,q); r.Eloss = E1 - r.Etw; r.ElossPct = 100*r.Eloss/E1;
+  if(r.ctrl !== false || type !== 'gate'){ r.jump = jumpInfo(yt,q,ytw); }
+  r.steep = Frn >= 1;
+  if(!s.noBw && !r.steep && r.afflux > 1e-4 && (type !== 'gate' || r.ctrl)){ r.bw = backwater(B,n,S0,Q,y1,yn); }
+  r.freeboard = s.bank - y1; r.over = y1 > s.bank + 1e-9;
+  if(type === 'check'){
+    var k = s.k; r.spacing = P/(S0*(1-k)); r.wedge = 0.5*P*r.spacing*B;
+  }
+  return r;
+}
+
+/* ================= text ================= */
+var T = {
+en:{
+  title:'River hydraulics lab',
+  sub:['Change the channel shape, roughness and slope. See how much water it carries and how fast it flows.',
+       'Put a gate, weir, check dam or spillway in the river. See how the water level, the jump and the energy change.'],
+  tabs:['Channel (Manning)','Structures'],
+  shapes:{rect:'Rectangle',trap:'Trapezoid',tri:'Triangle',circ:'Pipe'},
+  sl:{b:'Bottom width',z:'Side slope (H:V)',D:'Diameter',S0:'Bed slope',n:'Manning’s n',d50:'Bed grain size (D50)',bank:'Bank height',
+      y:'Water depth',Qs:'Discharge',Q:'Discharge',B:'Channel width',a:'Gate opening',Cc:'Contraction coefficient',P:'Crest height',
+      L:'Crest length (across the flow)',theta:'Notch angle',Lc:'Crest width (along the flow)',Cd:'Discharge coefficient',C:'Spillway coefficient C',
+      Hd:'Design head',k:'Bed slope after silting (share of original)',tw:'Tailwater depth'},
+  nHelp:'Surface material. It sets n (typical values, Chow 1959) and changes the picture.',
+  mats:{concrete:'Concrete',earth:'Earth',gravel:'Gravel',grass:'Short grass',cobbles:'Cobbles',weeds:'Tall grass and weeds',boulders:'Boulders'},
+  matMsg:{
+    concrete:'Smooth lining: fast flow and little friction loss, but the water leaves with a lot of energy.',
+    earth:'Clean earth is fairly smooth, but fast flow can erode it.',
+    gravel:'Gravel adds moderate roughness and can form a natural armour layer on the bed.',
+    grass:'Short grass protects the banks from erosion and adds friction. It bends flat at high velocity.',
+    cobbles:'Cobbles roughen the bed, create turbulence and slow the flow.',
+    weeds:'Tall grass and weeds slow the flow a lot. The roughness changes with the season.',
+    boulders:'Boulders make strong turbulence and slow the flow the most, so the same discharge needs more depth.'
+  },
+  estN:'Estimate n from D50',
+  modes:{depth:'I set the depth',flow:'I set the discharge'},
+  chResH:'What the channel does',
+  cc:['Discharge','Velocity','Froude number','Water depth','Critical depth','Specific energy','Flow area','Wetted perimeter','Hydraulic radius','Top width','Bed shear stress','Freeboard'],
+  ccx:{Fr:['subcritical (calm)','near critical','supercritical (fast)'],full:'pipe full'},
+  tauSub:function(c){ return 'critical for D50: '+c+' Pa'; },
+  bed:{ok:'bed stable',move:'bed moves'},
+  eyH:'Specific energy diagram (at this discharge)', rtH:'Rating curve: discharge for each depth',
+  msg:{
+    full:'The pipe is running full. A pipe at about 94% depth carries about 7% more than a full pipe, because near the top the wetted perimeter grows faster than the area.',
+    exceeds:'This discharge is more than the pipe can carry at this slope. It would surcharge.',
+    over:'The water is above the bank. The channel overtops.',
+    sub:'Subcritical flow: deep and calm. Water levels are controlled from downstream, for example by a weir or gate.',
+    crit:'The flow is close to critical depth. The surface is unstable and small changes cause waves.',
+    sup:'Supercritical flow: shallow and fast. It is controlled from upstream and can jump to deep flow suddenly.',
+    mild:'Mild slope: the slope is flatter than the critical slope, so uniform flow is subcritical.',
+    steep:'Steep slope: the slope is steeper than the critical slope, so uniform flow is supercritical.',
+    stable:'The bed grains of this size stay put at this flow.',
+    erode:'The bed shear stress is higher than the critical value, so grains of this size start to move. The bed can erode. Use larger stones or a lining.',
+    circ:'In a partly full pipe the discharge peaks at about 94% of the depth and the velocity at about 81%.',
+    nHi:'Higher roughness (larger n) slows the flow, so the same discharge needs more depth.'
+  },
+  chN:[
+    '<b>Manning equation.</b> V = (1/n) · R<sup>2/3</sup> · S<sup>1/2</sup> and Q = V · A, with hydraulic radius R = A/P (SI units). n is Manning’s roughness. Typical values follow Chow (1959).',
+    '<b>Normal depth.</b> When you set the discharge, the page finds the depth where Manning’s Q equals your Q (bisection). For a pipe it uses the lower depth on the rising part of the curve.',
+    '<b>Froude number.</b> Fr = V / √(g · A/T). Below 1 the flow is subcritical, above 1 supercritical. Critical depth is where A³/T = Q²/g.',
+    '<b>Specific energy.</b> E = y + V²/2g. Each E has two depths, one subcritical and one supercritical. The minimum E is at critical depth.',
+    '<b>Bed shear stress.</b> τ0 = ρ · g · R · S. Critical shear stress for grains uses Shields: τc = 0.047 · (ρs − ρ) · g · D50, a common value for gravel. It is a rough guide, not a design value.',
+    '<b>Estimate n from D50.</b> Strickler’s relation n = D50<sup>1/6</sup> / 21.1 (D50 in metres) gives a rough roughness for a gravel or cobble bed.',
+    '<b>Sources.</b> Chow (1959) Open-Channel Hydraulics; Henderson (1966) Open Channel Flow.'
+  ],
+  st:{gate:'Sluice gate',sharp:'Sharp-crested weir',vnotch:'V-notch weir',broad:'Broad-crested weir',check:'Check dam',ogee:'Ogee spillway'},
+  tc:{head:'Water level downstream of the structure',auto:'Normal depth',man:'Set it'},
+  stResH:'What the structure does',
+  sc:{y1:'Water depth upstream',H:'Head over the crest',afflux:'Water level rise upstream',state:'Flow state',yt:'Depth at the toe',jump:'Hydraulic jump',
+      loss:'Energy lost',Lj:'Stilling length',bw:'Backwater length',fb:'Freeboard',y2:'Jet depth (vena contracta)',ytw:'Tailwater depth',
+      spacing:'Spacing between check dams',wedge:'Sediment stored per dam',He:'Total head / design head',notch:'Notch top width'},
+  states:{free:'free flow',sub:'submerged',gateFree:'not controlling',drowned:'drowned crest',ctrl:'controlled'},
+  jumpState:{swept:'swept downstream',toe:'at the toe',drowned:'drowned'},
+  jumpType:{undular:'undular',weak:'weak',osc:'oscillating',steady:'steady',strong:'strong'},
+  sm:{
+    gateFree:'The opening is so large that the flow under the gate stays subcritical. The gate is not controlling the water level.',
+    gateOut:'The gate lip is above the upstream water surface, so the gate is not holding water back.',
+    gateSub:'The jump is drowned by the tailwater, so the flow under the gate is submerged. The upstream depth is higher than a free-flow gate would give.',
+    subWeir:'The tailwater is above the crest. The weir is submerged, so it needs more head to pass the same discharge (Villemonte correction).',
+    drownedCrest:'The tailwater is high compared with the head. The free-flow equation used here can underestimate the upstream depth.',
+    lowHead:'The head is below about 0.06 m, where surface tension and viscosity make the weir equation unreliable.',
+    highRatio:'H/P is above 2, outside the range of the Rehbock coefficient.',
+    notchWide:'The notch is wider than the channel at this head, so the V-notch equation no longer applies.',
+    broadRange:'H/Lc is outside 0.08 to 0.5, the usual range for a broad-crested weir. The coefficient is less certain.',
+    ogeeHi:'The head is above the design head. Negative pressures can form on the crest and cause cavitation.',
+    over:'The upstream water level is above the bank. The river would overtop.',
+    steep:'The channel is steep, so the natural flow is supercritical. The structure would cause a jump upstream, and no backwater curve is drawn.',
+    swept:'The tailwater is lower than the depth needed to hold the jump. The jump is swept downstream. A stilling basin, a lower floor or baffle blocks are needed.',
+    toe:'The tailwater matches the depth needed. The jump forms at the toe, which is what a stilling basin is designed for.',
+    drowned:'The tailwater is higher than needed. The jump is drowned. It is stable but dissipates less energy.',
+    check:'Check dams trap sediment. Silt builds up behind each dam and the bed slope flattens between dams.'
+  },
+  stN:[
+    '<b>Given.</b> You set the discharge Q, channel width B, Manning’s n and bed slope. The page finds the normal depth yn of the river without the structure, then the water level the structure forces upstream.',
+    '<b>Sharp-crested weir.</b> Q = (2/3) · Cd · √(2g) · Le · H<sup>3/2</sup>, with the Rehbock coefficient Cd = 0.611 + 0.075 · H/P. If the crest is shorter than the channel, the end contractions shorten it: Le = L − 0.1 · 2 · H (Francis). A high tailwater is handled with Villemonte’s factor (1 − (H2/H1)<sup>1.5</sup>)<sup>0.385</sup>.',
+    '<b>V-notch weir.</b> Q = (8/15) · Cd · √(2g) · tan(θ/2) · H<sup>5/2</sup> with Cd = 0.58. Villemonte uses the exponent 2.5.',
+    '<b>Broad-crested weir and check dam.</b> Q = Cd · (2/3)<sup>3/2</sup> · √g · B · H<sup>3/2</sup>. Critical depth forms on the crest. The check dam also gets a spacing from the slope it should leave behind: spacing = h / (S0 − S′), and the deposited wedge holds about ½ · h · spacing · B of sediment.',
+    '<b>Ogee spillway.</b> Q = C · B · He<sup>3/2</sup>, with C about 2.2 (SI) at the design head. The upstream depth follows from the energy equation.',
+    '<b>Sluice gate.</b> Energy between the upstream section and the vena contracta (y2 = Cc · a) gives Q = Cc · a · B · √(2g · y1 / (1 + y2/y1)). If the tailwater is higher than the conjugate depth, the jump is drowned and a momentum balance gives a higher pressure depth ys at the contracta, and then the energy equation gives the upstream depth (Henderson 1966).',
+    '<b>Below the structure.</b> Energy is conserved from upstream to the toe (an ideal case without losses) to find the fast, shallow depth yt. The hydraulic jump then needs the conjugate depth y2 = ½ · yt · (√(1 + 8Fr²) − 1). Energy lost in the jump is (y2 − yt)³ / (4 · yt · y2). Stilling length is about 6 · y2, and jump types follow the usual Froude ranges (USBR).',
+    '<b>Backwater.</b> The M1 curve upstream is integrated from the gradually varied flow equation dy/dx = (S0 − Sf) / (1 − Fr²) until the depth is within 2% of the natural rise.',
+    '<b>Limits.</b> These are simple steady-flow models for a rectangular channel with a straight approach. Real structures also depend on shape details, aeration, sediment and gates with side contractions.'
+  ],
+  credit:'\u00a9 2026 Hydro Logic Solution. All rights reserved. Teaching model in SI units. Not for design.',
+  alt:'Side view of the river and structure',
+  front:'Front view',hq:'Upstream depth for different discharges',yl:'Upstream depth y₁ (m)',xl:'Discharge Q (m³/s)',crest:'crest',lip:'gate lip',bankL:'bank'
+},
+zh:{
+  title:'河流水力学实验室',
+  sub:['改变渠道形状、糙率和坡度，看它能过多少水、水流多快。',
+       '在河里放一座闸门、堰、谷坊或溢洪道，看水位、水跃和能量如何变化。'],
+  tabs:['渠道（曼宁公式）','水工建筑物'],
+  shapes:{rect:'矩形',trap:'梯形',tri:'三角形',circ:'圆管'},
+  sl:{b:'底宽',z:'边坡（水平:垂直）',D:'管径',S0:'河床坡度',n:'曼宁糙率 n',d50:'床沙粒径（D50）',bank:'堤岸高度',
+      y:'水深',Qs:'流量',Q:'流量',B:'渠宽',a:'闸门开度',Cc:'收缩系数',P:'堰顶高度',
+      L:'堰顶长度（垂直水流方向）',theta:'缺口角度',Lc:'堰顶宽度（沿水流方向）',Cd:'流量系数',C:'溢洪道系数 C',
+      Hd:'设计水头',k:'淤积后河床坡度（占原坡度比例）',tw:'下游水深'},
+  nHelp:'表面材料。它决定 n（典型值，Chow 1959），并改变图中的样子。',
+  mats:{concrete:'混凝土',earth:'土质',gravel:'砾石',grass:'短草',cobbles:'卵石',weeds:'高草和杂草',boulders:'大块石'},
+  matMsg:{
+    concrete:'光滑衬砌：水流快、摩擦损失小，但出口处水流能量很大。',
+    earth:'干净的土面较光滑，但流速大时容易被冲刷。',
+    gravel:'砾石增加中等糙率，还可能在床面形成天然的护甲层。',
+    grass:'短草保护岸坡不受冲刷并增加摩擦，流速大时会被压伏。',
+    cobbles:'卵石使河床变粗糙，产生紊流并减慢水流。',
+    weeds:'高草和杂草会明显减慢水流，糙率随季节变化。',
+    boulders:'大块石产生强烈紊流，减速作用最大，同样的流量需要更大的水深。'
+  },
+  estN:'由 D50 估算 n',
+  modes:{depth:'我设定水深',flow:'我设定流量'},
+  chResH:'渠道的水力特性',
+  cc:['流量','流速','弗劳德数','水深','临界水深','比能','过水面积','湿周','水力半径','水面宽','床面剪应力','超高'],
+  ccx:{Fr:['缓流（亚临界）','接近临界','急流（超临界）'],full:'满管'},
+  tauSub:function(c){ return '该 D50 的临界值：'+c+' Pa'; },
+  bed:{ok:'床面稳定',move:'床沙起动'},
+  eyH:'比能曲线（当前流量下）', rtH:'水位流量关系：每个水深对应的流量',
+  msg:{
+    full:'圆管已满流。水深约 94% 时的过流量比满管约大 7%，因为接近管顶时湿周比面积增长得更快。',
+    exceeds:'该流量超过了圆管在此坡度下的过流能力，会发生压力流。',
+    over:'水位高于堤岸，渠道漫溢。',
+    sub:'缓流：水深较大、水流平稳。水位由下游控制，例如堰或闸门。',
+    crit:'水流接近临界水深，水面不稳定，微小变化就会产生波浪。',
+    sup:'急流：水浅流急，由上游控制，可能突然跃变为缓流。',
+    mild:'缓坡：坡度小于临界坡度，均匀流为缓流。',
+    steep:'陡坡：坡度大于临界坡度，均匀流为急流。',
+    stable:'此流量下该粒径的床沙保持稳定。',
+    erode:'床面剪应力高于临界值，该粒径的泥沙开始起动，河床可能冲刷。请使用更大的石块或护面。',
+    circ:'部分充满的圆管，流量在水深约 94% 时最大，流速在约 81% 时最大。',
+    nHi:'糙率越大（n 越大）水流越慢，同样的流量需要更大的水深。'
+  },
+  chN:[
+    '<b>曼宁公式。</b>V = (1/n) · R<sup>2/3</sup> · S<sup>1/2</sup>，Q = V · A，水力半径 R = A/P（国际单位）。n 为曼宁糙率，典型值取自 Chow (1959)。',
+    '<b>正常水深。</b>设定流量时，页面用二分法找出曼宁公式流量等于所设流量的水深。圆管取流量曲线上升段的较小水深。',
+    '<b>弗劳德数。</b>Fr = V / √(g · A/T)。小于 1 为缓流，大于 1 为急流。临界水深满足 A³/T = Q²/g。',
+    '<b>比能。</b>E = y + V²/2g。同一个 E 对应两个水深，一个缓流一个急流，最小 E 在临界水深处。',
+    '<b>床面剪应力。</b>τ0 = ρ · g · R · S。泥沙起动的临界剪应力采用 Shields 公式：τc = 0.047 · (ρs − ρ) · g · D50，这是砾石常用值，仅作粗略参考，不是设计值。',
+    '<b>由 D50 估算 n。</b>Strickler 关系 n = D50<sup>1/6</sup> / 21.1（D50 以米计），可粗略估计砾石或卵石河床的糙率。',
+    '<b>来源。</b>Chow (1959)《明渠水力学》；Henderson (1966)《明渠水流》。'
+  ],
+  st:{gate:'水闸',sharp:'薄壁堰',vnotch:'三角堰',broad:'宽顶堰',check:'谷坊（拦沙坝）',ogee:'溢流堰（WES 堰）'},
+  tc:{head:'建筑物下游水位',auto:'正常水深',man:'手动设定'},
+  stResH:'建筑物的水力效果',
+  sc:{y1:'上游水深',H:'堰顶水头',afflux:'上游水位壅高',state:'流态',yt:'坡脚水深',jump:'水跃',
+      loss:'能量损失',Lj:'消力池长度',bw:'回水长度',fb:'超高',y2:'射流水深（收缩断面）',ytw:'下游水深',
+      spacing:'谷坊间距',wedge:'每座谷坊拦沙量',He:'总水头 / 设计水头',notch:'缺口顶宽'},
+  states:{free:'自由出流',sub:'淹没出流',gateFree:'闸门不起控制作用',drowned:'堰顶淹没',ctrl:'闸门控制'},
+  jumpState:{swept:'被冲向下游',toe:'在坡脚',drowned:'被淹没'},
+  jumpType:{undular:'波状水跃',weak:'弱水跃',osc:'振荡水跃',steady:'稳定水跃',strong:'强水跃'},
+  sm:{
+    gateFree:'开度很大，闸下水流仍为缓流，闸门不起控制水位的作用。',
+    gateOut:'闸门下缘高于上游水面，闸门没有挡水。',
+    gateSub:'水跃被下游水位淹没，闸下为淹没出流，上游水深比自由出流时更高。',
+    subWeir:'下游水位高于堰顶，堰为淹没出流，通过同样流量需要更大的水头（Villemonte 修正）。',
+    drownedCrest:'下游水位相对水头偏高，这里使用的自由出流公式可能低估上游水深。',
+    lowHead:'水头低于约 0.06 米，表面张力和黏性使堰流公式不可靠。',
+    highRatio:'H/P 大于 2，超出 Rehbock 系数的适用范围。',
+    notchWide:'此水头下缺口宽于渠道，三角堰公式不再适用。',
+    broadRange:'H/Lc 不在 0.08–0.5 的常用范围，系数不太可靠。',
+    ogeeHi:'水头高于设计水头，堰面可能出现负压并引起气蚀。',
+    over:'上游水位高于堤岸，河水会漫溢。',
+    steep:'渠道为陡坡，天然水流为急流。建筑物会在上游引起水跃，因此不绘制回水曲线。',
+    swept:'下游水位低于维持水跃所需的水深，水跃被冲向下游。需要消力池、降低池底或设置消能墩。',
+    toe:'下游水位与所需水深相符，水跃在坡脚形成，这正是消力池设计所追求的。',
+    drowned:'下游水位高于所需水深，水跃被淹没，较稳定但消能较少。',
+    check:'谷坊拦截泥沙。每座坝后淤积泥沙，坝间河床坡度变缓。'
+  },
+  stN:[
+    '<b>已知条件。</b>你设定流量 Q、渠宽 B、曼宁糙率 n 和河床坡度。页面先求没有建筑物时河流的正常水深 yn，再求建筑物在上游造成的水位。',
+    '<b>薄壁堰。</b>Q = (2/3) · Cd · √(2g) · Le · H<sup>3/2</sup>，Rehbock 系数 Cd = 0.611 + 0.075 · H/P。堰顶短于渠道时，端部收缩使有效长度变短：Le = L − 0.1 · 2 · H（Francis）。下游水位高时用 Villemonte 系数 (1 − (H2/H1)<sup>1.5</sup>)<sup>0.385</sup> 修正。',
+    '<b>三角堰。</b>Q = (8/15) · Cd · √(2g) · tan(θ/2) · H<sup>5/2</sup>，Cd = 0.58。Villemonte 修正的指数为 2.5。',
+    '<b>宽顶堰和谷坊。</b>Q = Cd · (2/3)<sup>3/2</sup> · √g · B · H<sup>3/2</sup>，堰顶上出现临界水深。谷坊还按其希望留下的坡度给出间距：间距 = h / (S0 − S′)，淤积的楔形体大约存沙 ½ · h · 间距 · B。',
+    '<b>溢流堰。</b>Q = C · B · He<sup>3/2</sup>，设计水头下 C 约为 2.2（国际单位）。上游水深由能量方程求得。',
+    '<b>水闸。</b>上游断面与收缩断面（y2 = Cc · a）之间的能量方程给出 Q = Cc · a · B · √(2g · y1 / (1 + y2/y1))。若下游水位高于共轭水深，水跃被淹没，此时用动量方程求收缩断面的压力水深 ys，再用能量方程求上游水深（Henderson 1966）。',
+    '<b>建筑物下游。</b>假设上游到坡脚能量守恒（无损失的理想情况），求出浅而急的水深 yt。水跃所需的共轭水深 y2 = ½ · yt · (√(1 + 8Fr²) − 1)，水跃能量损失为 (y2 − yt)³ / (4 · yt · y2)，消力池长度约 6 · y2，水跃类型按常用的弗劳德数范围划分（USBR）。',
+    '<b>回水。</b>上游 M1 曲线由渐变流方程 dy/dx = (S0 − Sf) / (1 − Fr²) 积分，直到水深与天然壅高相差不到 2%。',
+    '<b>局限。</b>这是针对矩形渠道、平直来流的简单恒定流模型。真实建筑物还取决于形状细节、通气、泥沙和有侧收缩的闸门。'
+  ],
+  credit:'\u00a9 2026 Hydro Logic Solution 版权所有。教学模型，国际单位制，不可用于设计。',
+  alt:'河流与建筑物的侧视图',
+  front:'正视图',hq:'不同流量下的上游水深',yl:'上游水深 y₁ (m)',xl:'流量 Q (m³/s)',crest:'堰顶',lip:'闸门下缘',bankL:'堤岸'
+}};
+
+/* ================= drawing ================= */
+var VW = 560, VH = 300, GY = 248, XS = 236;
+function f2(v){ return v >= 100 ? v.toFixed(0) : (v >= 10 ? v.toFixed(1) : v.toFixed(2)); }
+function P2(pts){ return pts.map(function(p){ return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' '); }
+function txt(x,y,t,o){
+  o = o || {};
+  return '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="'+(o.a||'start')+'" font-size="'+(o.s||12)+'" font-weight="'+(o.w||600)+'" fill="'+(o.c||'#fff')+'" stroke="rgba(6,18,30,.75)" stroke-width="3" paint-order="stroke" style="font-family:inherit">'+t+'</text>';
+}
+function dimV(x,yTop,yBot,label,o){
+  o = o || {};
+  var c = o.c || '#ffe08a', side = o.side || 1;
+  var s = '<line x1="'+x+'" x2="'+x+'" y1="'+yTop.toFixed(1)+'" y2="'+yBot.toFixed(1)+'" stroke="'+c+'" stroke-width="1.6"/>'
+        + '<line x1="'+(x-4)+'" x2="'+(x+4)+'" y1="'+yTop.toFixed(1)+'" y2="'+yTop.toFixed(1)+'" stroke="'+c+'" stroke-width="1.6"/>'
+        + '<line x1="'+(x-4)+'" x2="'+(x+4)+'" y1="'+yBot.toFixed(1)+'" y2="'+yBot.toFixed(1)+'" stroke="'+c+'" stroke-width="1.6"/>';
+  var ty = (yTop+yBot)/2 + 4;
+  return s + txt(x + side*7, ty, label, {a:side > 0 ? 'start' : 'end', c:c, s:o.s || 12});
+}
+var DEFS = '<defs>'
+  + '<linearGradient id="sky" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="250"><stop offset="0" stop-color="#5ea0d2"/><stop offset="1" stop-color="#cfe6f3"/></linearGradient>'
+  + '<linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fb7e6"/><stop offset="1" stop-color="#1c6fa8"/></linearGradient>'
+  + '<linearGradient id="wf" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8fd3f4"/><stop offset="1" stop-color="#4aa5d9"/></linearGradient>'
+  + '<linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a6248"/><stop offset="1" stop-color="#3b2d20"/></linearGradient>'
+  + '<linearGradient id="cn" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b7bec5"/><stop offset="1" stop-color="#8d979f"/></linearGradient>'
+  + '<pattern id="stone" width="16" height="12" patternUnits="userSpaceOnUse"><rect width="16" height="12" fill="#8a8378"/><rect x="1" y="1" width="8" height="5" rx="1.5" fill="#a39c8f"/><rect x="10" y="4" width="5" height="6" rx="1.5" fill="#6f695f"/><rect x="2" y="7" width="6" height="4" rx="1.5" fill="#9a9386"/></pattern>'
+  + '<pattern id="soil" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#000" opacity=".2"/><circle cx="7" cy="6" r=".8" fill="#fff" opacity=".12"/></pattern>'
+  + '<marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L10,5L0,10Z" fill="#e8f6ff"/></marker>'
+  + '</defs>';
+
+
+/* ---------- surface materials (linked to Manning n) ---------- */
+var MATS = [
+  {k:'concrete',n:0.013,col:'#b3bbc2',dot:'#aeb6bd'},
+  {k:'earth',n:0.022,col:'#8a6a48',dot:'#8a6a48'},
+  {k:'gravel',n:0.027,col:'#b9a98d',dot:'#b9a98d'},
+  {k:'grass',n:0.030,col:'#5c9a3a',dot:'#5c9a3a'},
+  {k:'cobbles',n:0.040,col:'#8f8a80',dot:'#8f8a80'},
+  {k:'weeds',n:0.050,col:'#3f7d2f',dot:'#3f7d2f'},
+  {k:'boulders',n:0.070,col:'#6b6a68',dot:'#6b6a68'}
+];
+function matOf(n){
+  var best = MATS[0], bd = 1e9;
+  MATS.forEach(function(m){ var dd = Math.abs(Math.log(n/m.n)); if(dd < bd){ bd = dd; best = m; } });
+  return best.k;
+}
+function matDef(k){ for(var i = 0; i < MATS.length; i++) if(MATS[i].k === k) return MATS[i]; return MATS[0]; }
+function rngF(seed){ var a = seed >>> 0; return function(){ a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0)/4294967296; }; }
+function rockSvg(x,y,r,pal,R){
+  var rx = r*(0.9+0.4*R()), ry = r*(0.6+0.3*R()), ang = (R()-0.5)*50, c = pal[Math.floor(R()*pal.length)];
+  return '<g transform="translate('+x.toFixed(1)+' '+y.toFixed(1)+') rotate('+ang.toFixed(0)+')"><ellipse rx="'+rx.toFixed(1)+'" ry="'+ry.toFixed(1)+'" fill="'+c+'" stroke="rgba(20,20,20,.55)" stroke-width="0.8"/>'
+    + '<ellipse cx="'+(-rx*0.25).toFixed(1)+'" cy="'+(-ry*0.3).toFixed(1)+'" rx="'+(rx*0.5).toFixed(1)+'" ry="'+(ry*0.35).toFixed(1)+'" fill="rgba(255,255,255,.22)"/></g>';
+}
+function bladeSvg(x,y,nx,ny,len,R,cols,curl){
+  var a = Math.atan2(ny,nx) + (R()-0.5)*0.9, l = len*(0.6+0.7*R()), ex = x + Math.cos(a)*l, ey = y + Math.sin(a)*l;
+  var c = cols[Math.floor(R()*cols.length)];
+  if(curl){ var mx = (x+ex)/2 + (R()-0.5)*l*0.5, my = (y+ey)/2; return '<path d="M'+x.toFixed(1)+','+y.toFixed(1)+' Q'+mx.toFixed(1)+','+my.toFixed(1)+' '+ex.toFixed(1)+','+ey.toFixed(1)+'" fill="none" stroke="'+c+'" stroke-width="1.5" stroke-linecap="round"/>'; }
+  return '<line x1="'+x.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+ex.toFixed(1)+'" y2="'+ey.toFixed(1)+'" stroke="'+c+'" stroke-width="1.5" stroke-linecap="round"/>';
+}
+/* edges: [[x0,y0,x1,y1],...], (cx,cy) is a point on the water side so normals can point inward.
+   sc = pixels per metre, maxPx caps element size, skip = [[xa,xb],...] ranges to leave empty. */
+function matEdges(mat,edges,cx,cy,sc,maxPx,seed,skip){
+  var m = matDef(mat), out = '', R = rngF(seed || 7), body = '';
+  edges.forEach(function(e,ei){
+    var dx = e[2]-e[0], dy = e[3]-e[1], L = Math.sqrt(dx*dx+dy*dy); if(L < 1) return;
+    var tx = dx/L, ty = dy/L, nx = -ty, ny = tx, mx = (e[0]+e[2])/2, my = (e[1]+e[3])/2;
+    if((cx-mx)*nx + (cy-my)*ny < 0){ nx = -nx; ny = -ny; }
+    var under = '<line x1="'+e[0].toFixed(1)+'" y1="'+e[1].toFixed(1)+'" x2="'+e[2].toFixed(1)+'" y2="'+e[3].toFixed(1)+'" stroke="'+m.col+'" stroke-width="'+(mat === 'boulders' || mat === 'cobbles' ? 6 : 5)+'" stroke-linecap="round"/>';
+    out += under;
+    var step, t;
+    if(mat === 'concrete'){
+      for(t = 24; t < L; t += 46) body += '<line x1="'+(e[0]+tx*t-nx*3).toFixed(1)+'" y1="'+(e[1]+ty*t-ny*3).toFixed(1)+'" x2="'+(e[0]+tx*t+nx*7).toFixed(1)+'" y2="'+(e[1]+ty*t+ny*7).toFixed(1)+'" stroke="#7e8890" stroke-width="1.3"/>';
+    } else if(mat === 'earth'){
+      for(t = 3; t < L; t += 7) body += '<circle cx="'+(e[0]+tx*t+nx*R()*4).toFixed(1)+'" cy="'+(e[1]+ty*t+ny*R()*4).toFixed(1)+'" r="'+(0.8+R()*1.3).toFixed(1)+'" fill="'+(R() < 0.5 ? '#6f523a' : '#a48462')+'"/>';
+    } else if(mat === 'gravel'){
+      var s1 = clamp(0.06*sc,3,7); step = s1*1.15;
+      for(t = 2; t < L; t += step){
+        var px = e[0]+tx*t+nx*s1*0.3*R(), py = e[1]+ty*t+ny*s1*0.3*R(), rr = s1*(0.6+0.5*R()), pal = ['#c9b99a','#a8997c','#8f8168','#d9ccb0','#b1a58f'];
+        var pts = [], k;
+        for(k = 0; k < 5; k++){ var an = k/5*6.283 + R(), q = rr*(0.75+0.35*R()); pts.push([px+Math.cos(an)*q, py+Math.sin(an)*q]); }
+        body += '<polygon points="'+P2(pts)+'" fill="'+pal[Math.floor(R()*pal.length)]+'" stroke="rgba(40,30,20,.5)" stroke-width="0.5"/>';
+      }
+    } else if(mat === 'grass' || mat === 'weeds'){
+      var tall = mat === 'weeds', len = tall ? clamp(0.6*sc,18,Math.max(20,maxPx*1.6)) : clamp(0.16*sc,7,14);
+      var cols = tall ? ['#2f6b2a','#3f7d2f','#5c9a3a','#8a9a3a','#274f22'] : ['#4c8a34','#5c9a3a','#6fae45','#3f7d2f'];
+      step = tall ? 2.6 : 3.2;
+      for(t = 1; t < L; t += step) body += bladeSvg(e[0]+tx*t, e[1]+ty*t, nx, ny, len, R, cols, tall);
+    } else if(mat === 'cobbles'){
+      var s2 = clamp(0.22*sc,9,Math.max(10,maxPx*1.2)); step = s2*1.55;
+      for(t = s2*0.5; t < L; t += step) body += rockSvg(e[0]+tx*t+nx*s2*0.28, e[1]+ty*t+ny*s2*0.28, s2*(0.5+0.25*R()), ['#9b968c','#7f7a70','#b3ada0','#8a7f73','#a39a8c'], R);
+    } else { // boulders
+      var s3 = clamp(0.8*sc,22,Math.max(24,maxPx*1.8)); step = s3*1.75;
+      for(t = s3*0.55; t < L; t += step){
+        if(R() < 0.22) continue;
+        body += rockSvg(e[0]+tx*t+nx*s3*0.3, e[1]+ty*t+ny*s3*0.3, s3*(0.42+0.22*R()), ['#6d6b69','#57595c','#7b7570','#5f5b57','#8a857e'], R);
+      }
+    }
+  });
+  return out + body;
+}
+function ogeeProfile(Hd,P){
+  var pts = [], xmax = 1.539*Hd, N = 26, i;
+  for(i=0;i<=N;i++){
+    var x = xmax*i/N, y = Math.pow(x,1.85)/(2*Math.pow(Hd,0.85));
+    if(y >= P){ pts.push([x,P]); return pts; }
+    pts.push([x,y]);
+  }
+  var last = pts[pts.length-1], rem = P-last[1];
+  if(rem > 0) pts.push([last[0]+0.75*rem, P]);
+  return pts;
+}
+
+function frontInset(r,s){
+  var x0 = VW-134, y0 = 10, FW = 108, FH = 60, bx = x0+8, by = y0+8+FH;
+  var Hf = Math.max(r.y1, r.P || 0, s.st === 'gate' ? s.a : 0)*1.2, hs = FH/Hf;
+  var out = '<g><rect x="'+x0+'" y="'+y0+'" width="124" height="'+(FH+30)+'" rx="8" fill="rgba(6,18,30,.72)" stroke="rgba(255,255,255,.25)"/>';
+  var wall = '#9aa4ad', wat = '#4aa5d9', yw = by - r.y1*hs;
+  if(s.st === 'gate'){
+    var ya = by - s.a*hs;
+    out += '<rect x="'+bx+'" y="'+by.toFixed(1)+'" width="'+FW+'" height="0" fill="'+wall+'"/>';
+    out += '<rect x="'+bx+'" y="'+(by-FH)+'" width="'+FW+'" height="'+(FH-s.a*hs).toFixed(1)+'" fill="'+wall+'"/>';
+    out += '<rect x="'+bx+'" y="'+ya.toFixed(1)+'" width="'+FW+'" height="'+(s.a*hs).toFixed(1)+'" fill="'+wat+'" opacity=".85"/>';
+  } else if(s.st === 'sharp'){
+    var Lw = Math.min(1, s.L/r.B)*FW, nx = bx + (FW-Lw)/2, yp = by - s.P*hs;
+    out += '<rect x="'+bx+'" y="'+(by-FH)+'" width="'+FW+'" height="'+FH+'" fill="'+wall+'"/>';
+    out += '<rect x="'+nx.toFixed(1)+'" y="'+(by-FH)+'" width="'+Lw.toFixed(1)+'" height="'+(FH-s.P*hs).toFixed(1)+'" fill="#0c1f33"/>';
+    out += '<rect x="'+nx.toFixed(1)+'" y="'+yw.toFixed(1)+'" width="'+Lw.toFixed(1)+'" height="'+Math.max(0,yp-yw).toFixed(1)+'" fill="'+wat+'" opacity=".85"/>';
+  } else if(s.st === 'vnotch'){
+    var yp2 = by - s.P*hs, tn = Math.tan(s.theta*Math.PI/360), cx = bx + FW/2;
+    var half = Math.min(FW/2, (r.H*tn/r.B)*FW), hTop = (FH - s.P*hs), hgt = Math.max(1,(s.P*hs)>=FH?1:hTop);
+    var hx = Math.min(FW/2, (tn/r.B)*FW*(hTop/hs));
+    out += '<rect x="'+bx+'" y="'+(by-FH)+'" width="'+FW+'" height="'+FH+'" fill="'+wall+'"/>';
+    out += '<polygon points="'+P2([[cx,yp2],[cx-hx,by-FH],[cx+hx,by-FH]])+'" fill="#0c1f33"/>';
+    out += '<polygon points="'+P2([[cx,yp2],[cx-half,yw],[cx+half,yw]])+'" fill="'+wat+'" opacity=".9"/>';
+  } else {
+    var yc0 = by - r.P*hs;
+    out += '<rect x="'+bx+'" y="'+yc0.toFixed(1)+'" width="'+FW+'" height="'+(r.P*hs).toFixed(1)+'" fill="'+wall+'"/>';
+    out += '<rect x="'+bx+'" y="'+yw.toFixed(1)+'" width="'+FW+'" height="'+Math.max(0,yc0-yw).toFixed(1)+'" fill="'+wat+'" opacity=".85"/>';
+  }
+  out += '<line x1="'+bx+'" x2="'+(bx+FW)+'" y1="'+yw.toFixed(1)+'" y2="'+yw.toFixed(1)+'" stroke="#ffe08a" stroke-dasharray="4 3"/>';
+  out += txt(x0+62,by+15,s.front,{a:'middle',s:10.5,w:500}) + '</g>';
+  return out;
+}
+
+function sideSVG(r,s,T){
+  var tops = [r.y1, r.ytw, r.jump ? r.jump.y2 : 0];
+  if(s.st === 'gate') tops.push(s.a*1.15);
+  if(r.P != null) tops.push(r.P*1.05);
+  var top = Math.max.apply(null,tops);
+  if(s.bank <= top*2.5) top = Math.max(top,s.bank);
+  top *= 1.15; var sc = Math.min(190/top,700);
+  var Y = function(m){ return GY - m*sc; };
+  var o = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+VW+' '+VH+'">'+DEFS;
+  o += '<rect width="'+VW+'" height="'+VH+'" fill="url(#sky)"/>';
+  o += '<path d="M0,196 Q80,168 150,190 T300,178 T430,186 T560,170 L560,250 L0,250Z" fill="#7f9db0" opacity=".35"/>';
+  o += '<rect y="'+GY+'" width="'+VW+'" height="'+(VH-GY)+'" fill="url(#gr)"/><rect y="'+GY+'" width="'+VW+'" height="'+(VH-GY)+'" fill="url(#soil)"/>';
+  // bank line
+  if(s.bank <= top && s.bank > 0){ o += '<line x1="0" x2="'+VW+'" y1="'+Y(s.bank).toFixed(1)+'" y2="'+Y(s.bank).toFixed(1)+'" stroke="'+(r.over ? '#ff8a80' : '#e9d9a6')+'" stroke-dasharray="6 5" stroke-width="1.2" opacity=".8"/>'; }
+
+  // ---------- upstream water ----------
+  var up = [], xL = 12, xE = XS-3;
+  if(r.bw && r.bw.pts.length > 2){
+    var pts = r.bw.pts, L = r.bw.L || 1, stp = Math.max(1,Math.floor(pts.length/40));
+    for(var i = pts.length-1; i > 0; i -= stp) up.push([xE - (pts[i].d/L)*(xE-xL), Y(pts[i].y)]);
+    up.push([xE,Y(pts[0].y)]);
+  } else { up = [[xL,Y(r.y1)],[xE,Y(r.y1)]]; }
+  if(r.steep || (s.st === 'gate' && r.ctrl === false)) up = [[xL,Y(r.yn)],[xE,Y(r.yn)]];
+  var ySurfCrest = null;
+  if(s.st !== 'gate' && r.H != null && !r.steep){
+    ySurfCrest = P0(r) + (2/3)*(s.st === 'ogee' ? (r.He || r.H) : r.H);
+    up = up.filter(function(p){ return p[0] < xE-40; });
+    up.push([xE-40,Y(r.y1)],[xE-14,Y(r.y1 - 0.15*(r.y1-ySurfCrest))],[xE,Y(ySurfCrest)]);
+  }
+  var upSurf = up.map(function(p){ return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' L');
+  o += '<path d="M'+xL+','+GY+' L'+upSurf+' L'+xE+','+GY+'Z" fill="url(#wg)" opacity=".92"/>';
+  o += '<polyline class="wave" points="'+P2(up)+'" fill="none" stroke="#e8f6ff" stroke-width="1.8" opacity=".9"/>';
+
+  // ---------- structure + nappe ----------
+  var st = s.st, xt, yt = r.yt, sup = r.jump, body = '', nappe = '';
+  var yc = r.yc, P = r.P || 0;
+  if(st === 'gate'){
+    var ya = Y(s.a), lip = ya;
+    body += '<rect x="'+(XS-3)+'" y="14" width="7" height="'+(lip-14).toFixed(1)+'" fill="#4f6a80"/><rect x="'+(XS-3)+'" y="'+(lip-3).toFixed(1)+'" width="7" height="4" fill="#2f4658"/>';
+    body += '<rect x="'+(XS-16)+'" y="12" width="34" height="7" fill="#33485b"/><rect x="'+(XS-2)+'" y="2" width="5" height="12" fill="#33485b"/>';
+    body += '<rect x="'+(XS-22)+'" y="'+(GY-4)+'" width="6" height="4" fill="#7d8790" opacity="0"/>';
+    xt = XS+12;
+    var ytp = Y(yt);
+    nappe = '<path d="M'+(XS+4)+','+GY+' L'+(XS+4)+','+ytp.toFixed(1)+' L'+xt+','+ytp.toFixed(1)+' L'+xt+','+GY+'Z" fill="url(#wf)"/>';
+  } else if(st === 'sharp' || st === 'vnotch'){
+    body += '<rect x="'+(XS-5)+'" y="'+Y(P).toFixed(1)+'" width="8" height="'+(P*sc).toFixed(1)+'" fill="url(#cn)"/><rect x="'+(XS-2)+'" y="'+(Y(P)-1).toFixed(1)+'" width="3" height="3" fill="#4f6a80"/>';
+    var reach = clamp(Math.sqrt(2*yc*P)*sc,16,130); xt = XS+3+reach;
+    var hc = (r.H*2/3)*sc;
+    nappe = '<path d="M'+(XS+3)+','+(Y(P)-hc).toFixed(1)+' Q'+(XS+3+reach*0.7)+','+(Y(P)-hc).toFixed(1)+' '+xt.toFixed(1)+','+Y(yt).toFixed(1)+' L'+xt.toFixed(1)+','+GY+' Q'+(XS+3+reach*0.3)+','+(Y(P)+ (P*sc)*0.35).toFixed(1)+' '+(XS+3)+','+Y(P).toFixed(1)+'Z" fill="url(#wf)" opacity=".92"/>';
+  } else if(st === 'broad' || st === 'check'){
+    var wc = clamp(s.Lc*sc,18,110), xa = XS-2, xb = XS+wc;
+    var fill = st === 'check' ? 'url(#stone)' : 'url(#cn)';
+    body += '<polygon points="'+P2([[xa,GY],[xa,Y(P)],[xb,Y(P)],[xb+ (st === 'check' ? P*sc*0.35 : 0),GY]])+'" fill="'+fill+'" stroke="#5c6670" stroke-width="1"/>';
+    if(ySurfCrest !== null){ nappe += '<polygon points="'+P2([[XS-3,Y(ySurfCrest)],[xb,Y(ySurfCrest)],[xb,Y(P)],[XS-3,Y(P)]])+'" fill="url(#wf)" opacity=".92"/>'; }
+    var reach2 = clamp(Math.sqrt(2*yc*P)*sc,16,130); xt = xb + (st === 'check' ? P*sc*0.35 : 0) + reach2*0.6;
+    var hc2 = (r.H*2/3)*sc;
+    nappe += '<path d="M'+xb+','+(Y(P)-hc2).toFixed(1)+' Q'+(xb+reach2*0.6)+','+(Y(P)-hc2).toFixed(1)+' '+xt.toFixed(1)+','+Y(yt).toFixed(1)+' L'+xt.toFixed(1)+','+GY+' L'+(xb+(st === 'check' ? P*sc*0.35 : 0))+','+GY+' L'+xb+','+Y(P).toFixed(1)+'Z" fill="url(#wf)" opacity=".92"/>';
+  } else { // ogee
+    var prof = ogeeProfile(s.Hd,P), ppx = prof.map(function(p){ return [XS+p[0]*sc, Y(P)+p[1]*sc]; });
+    var last = ppx[ppx.length-1]; xt = last[0]+6;
+    body += '<polygon points="'+P2([[XS-8,GY],[XS-8,Y(P)]].concat(ppx).concat([[last[0]+2,GY]]))+'" fill="url(#cn)" stroke="#6d7780" stroke-width="1"/>';
+    var thick0 = (r.He ? r.He*2/3 : r.H*2/3)*sc, thick1 = yt*sc, sf = [], bt = [];
+    ppx.forEach(function(p,i){ var w = i/(ppx.length-1), th = thick0*(1-w)+thick1*w; sf.push([p[0],p[1]-th]); bt.push(p); });
+    nappe = '<polygon points="'+P2(sf.concat(bt.slice().reverse()))+'" fill="url(#wf)" opacity=".94"/>';
+  }
+
+  // ---------- downstream water ----------
+  var Xend = VW-12, Ltw = Y(r.ytw), dn = [], foam = '', jet = '';
+  var state = sup ? sup.state : 'flat';
+  if(s.st === 'gate' && r.ctrl === false){ dn = [[XS+3,Y(r.yn)],[Xend,Y(r.yn)]]; }
+  else if(state === 'toe'){
+    var Lj = clamp(sup.Lj*sc,40,150);
+    dn = [[xt,Y(yt)],[xt+10,Y(yt*1.05)],[xt+Lj*0.55,Y(sup.y2*0.85)],[xt+Lj,Y(sup.y2)],[Xend,Ltw]];
+    foam = jumpFoam(xt+8,xt+Lj,Y(sup.y2*1.02),Y(yt));
+  } else if(state === 'drowned'){
+    dn = [[xt,Ltw],[Xend,Ltw]];
+    var Lj2 = clamp(sup.Lj*sc,40,150);
+    jet = '<path d="M'+xt+','+GY+' L'+xt+','+Y(yt).toFixed(1)+' Q'+(xt+Lj2*0.5)+','+Y(yt*1.4).toFixed(1)+' '+(xt+Lj2)+','+Y(Math.min(r.ytw*0.6,yt*3)).toFixed(1)+' L'+(xt+Lj2)+','+GY+'Z" fill="#2a80b8" opacity=".55"/>';
+    foam = jumpFoam(xt-4,xt+Lj2*0.6,Ltw+2,Ltw-6);
+  } else {
+    var xj = Math.min(Xend-80,xt+180);
+    dn = [[xt,Y(yt)],[xj,Y(yt*1.15)],[xj+34,Y(Math.max(r.ytw,yt*1.2))],[Xend,Ltw]];
+    foam = jumpFoam(xj,xj+40,Y(Math.max(r.ytw,yt*1.2))-2,Y(yt*1.15));
+  }
+  var dnPts = dn.map(function(p){ return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' L');
+  o += '<path d="M'+dn[0][0].toFixed(1)+','+GY+' L'+dnPts+' L'+Xend+','+GY+'Z" fill="url(#wg)" opacity=".94"/>';
+  o += '<polyline class="wave" points="'+P2(dn)+'" fill="none" stroke="#e8f6ff" stroke-width="1.8" opacity=".9"/>';
+  o += jet + nappe + body + foam;
+  // flow chevrons
+  var durU = clamp(2.4/Math.max(r.V1,0.15),0.8,9).toFixed(2), durD = clamp(2.4/Math.max(r.q/r.ytw,0.15),0.8,9).toFixed(2);
+  for(var k = 0; k < 3; k++){ o += '<g class="drift" style="animation-duration:'+durU+'s;animation-delay:'+(k*1.2)+'s"><path d="M'+(30+k*55)+','+(Y(r.y1*0.45)).toFixed(1)+' l8,-4 l0,3 l8,0 l0,2 l-8,0 l0,3Z" fill="#eaf8ff" opacity=".8"/></g>'; }
+  if(dn.length > 1){ var ax = Math.max(dn[dn.length-1][0]-120,xt+30); for(var k2 = 0; k2 < 2; k2++) o += '<g class="drift" style="animation-duration:'+durD+'s;animation-delay:'+(k2*1.8)+'s"><path d="M'+(ax+k2*40)+','+(Ltw+ (GY-Ltw)*0.5).toFixed(1)+' l8,-4 l0,3 l8,0 l0,2 l-8,0 l0,3Z" fill="#eaf8ff" opacity=".8"/></g>'; }
+
+  // ---------- bed material ----------
+  var mat = s.mat || matOf(s.n), foot0 = XS-10, foot1 = Math.max(xt, XS+16);
+  var segs = [];
+  if(foot0 > 14) segs.push([0,foot0]); if(foot1 < VW-2) segs.push([foot1,VW]);
+  var bedE = segs.map(function(q){ return [q[0],GY,q[1],GY]; });
+  o += '<g opacity=".95">'+matEdges(mat,bedE,VW/2,GY-60,sc*0.8,0.18*Math.max(20,GY-Y(r.ytw)),23)+'</g>';
+  // ---------- labels ----------
+  var lab = '';
+  var xd = (s.st === 'gate' || ySurfCrest === null) ? XS-14 : xE-40;
+  lab += dimV(xd, Y(r.y1), GY, 'y₁ '+f2(r.y1)+' m', {side:-1});
+  if(!(r.steep || (s.st === 'gate' && r.ctrl === false)) ){ lab += dimV(30, Y(r.yn), GY, 'yₙ '+f2(r.yn), {side:1,c:'#bfe7ff',s:11}); }
+  if(s.st === 'gate'){ lab += dimV(XS+22, Y(s.a), GY, 'a '+f2(s.a), {side:1,c:'#ffe08a',s:11}); }
+  else if(r.H != null){ lab += dimV(xd+12, Y(r.y1), Y(P), 'H '+f2(r.H), {side:1,c:'#9df0c0',s:11}); }
+  lab += dimV(VW-22, Ltw, GY, 'y₍tw₎ '+f2(r.ytw), {side:-1,c:'#bfe7ff',s:11}).replace('y₍tw₎','tw');
+  if(sup && state !== 'drowned') lab += txt(xt+6,Y(yt)-6,'yₜ '+f2(yt),{s:11,c:'#ffd6a5'});
+  o += lab + txt(12,18,T.mats[mat]+' · n = '+s.n.toFixed(3),{s:13}) + frontInset(r,s);
+  o += '</svg>';
+  return o;
+}
+function P0(r){ return r.P || 0; }
+function jumpFoam(x1,x2,yTop,yBot){
+  var f = '', i, n = 16;
+  for(i = 0; i < n; i++){
+    var t = i/(n-1), x = x1 + (x2-x1)*t, y = yTop + (yBot-yTop)*(1-t)*0.4 + ((i*37)%9) - 3;
+    f += '<circle class="foamdot" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(2+(i%3))+'" fill="#fff" style="animation-delay:'+((i%5)*0.18).toFixed(2)+'s"/>';
+  }
+  return f;
+}
+
+/* ---------- channel cross-section ---------- */
+function chanSVG(o,s,T){
+  var shape = s.shape, y = o.y, hb = shape === 'circ' ? s.D : s.bank;
+  var wm = shape === 'rect' ? s.b : (shape === 'trap' ? s.b + 2*s.z*hb : (shape === 'tri' ? 2*s.z*hb : s.D));
+  var sc = Math.min(330/Math.max(wm,0.1),175/Math.max(hb,0.1),400);
+  var xc = VW/2, base = 226, out = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+VW+' '+VH+'">'+DEFS;
+  out += '<rect width="'+VW+'" height="'+VH+'" fill="url(#sky)"/>';
+  var ytop = base - hb*sc, mat = s.mat || matOf(s.n), cap = 0.22*hb*sc;
+  if(shape === 'circ'){
+    var R = s.D*sc/2, cy = base - R, ground = '<path fill-rule="evenodd" d="M0,'+(cy-R-26).toFixed(1)+' H'+VW+' V'+VH+' H0Z M'+(xc-R).toFixed(1)+','+cy.toFixed(1)+' a'+R.toFixed(1)+','+R.toFixed(1)+' 0 1,0 '+(2*R).toFixed(1)+',0 a'+R.toFixed(1)+','+R.toFixed(1)+' 0 1,0 '+(-2*R).toFixed(1)+',0Z" fill="url(#gr)"/>';
+    out += ground + '<rect y="'+(cy-R-26).toFixed(1)+'" width="'+VW+'" height="'+(VH-(cy-R-26)).toFixed(1)+'" fill="url(#soil)" opacity=".9"/>';
+    out += '<clipPath id="pc"><circle cx="'+xc+'" cy="'+cy.toFixed(1)+'" r="'+R.toFixed(1)+'"/></clipPath>';
+    out += '<circle cx="'+xc+'" cy="'+cy.toFixed(1)+'" r="'+R.toFixed(1)+'" fill="#1b2a38"/>';
+    out += '<g clip-path="url(#pc)"><rect x="'+(xc-R)+'" y="'+(base-Math.min(y,s.D)*sc).toFixed(1)+'" width="'+(2*R)+'" height="'+(R*2)+'" fill="url(#wg)"/></g>';
+    var ringE = [], ai;
+    for(ai = 0; ai < 56; ai++){ var a0r = ai/56*6.2832, a1r = (ai+1)/56*6.2832; ringE.push([xc+R*Math.cos(a0r), cy+R*Math.sin(a0r), xc+R*Math.cos(a1r), cy+R*Math.sin(a1r)]); }
+    out += matEdges(mat,ringE,xc,cy,sc,cap,11);
+    var wetC = '';
+    if(y < s.D){ var th = 2*Math.acos(1-2*y/s.D), a0 = Math.PI/2 - th/2, a1 = Math.PI/2 + th/2;
+      var x0 = xc + R*Math.cos(a0), y0 = cy + R*Math.sin(a0), x1 = xc + R*Math.cos(a1), y1 = cy + R*Math.sin(a1);
+      wetC = '<path d="M'+x0.toFixed(1)+','+y0.toFixed(1)+' A'+R.toFixed(1)+','+R.toFixed(1)+' 0 '+(th > Math.PI ? 1 : 0)+' 1 '+x1.toFixed(1)+','+y1.toFixed(1)+'" fill="none" stroke="#ffe08a" stroke-width="3.5"/>'; }
+    else wetC = '<circle cx="'+xc+'" cy="'+cy.toFixed(1)+'" r="'+R.toFixed(1)+'" fill="none" stroke="#ffe08a" stroke-width="3.5"/>';
+    out += wetC + dimV(xc+R+22, base-Math.min(y,s.D)*sc, base, 'y '+f2(y)+' m', {side:1}) + txt(xc,base+22,'D = '+f2(s.D)+' m',{a:'middle'});
+  } else {
+    var pp = {b:s.b,z:s.z}, yv = Math.min(y,hb*1.2);
+    var hv = Math.max(Math.min(hb,Math.max(y*1.7,0.4)),yv*1.12), bankVis = hv >= hb-1e-9;
+    var Tv = Math.max(geom(shape,pp,hv).T,0.2);
+    sc = Math.min(370/Tv,172/hv,700);
+    var hTop = bankVis ? hb : (base+30)/sc, ytop2 = base - hTop*sc, cap2 = 0.22*hv*sc;
+    var half = function(dd){ return geom(shape,pp,dd).T/2*sc; };
+    var bw = shape === 'tri' ? 0 : s.b*sc/2, tw = half(hTop);
+    var gTop = bankVis ? ytop2 : -10;
+    out += '<rect y="'+gTop.toFixed(1)+'" width="'+VW+'" height="'+(VH-gTop).toFixed(1)+'" fill="url(#gr)"/><rect y="'+gTop.toFixed(1)+'" width="'+VW+'" height="'+(VH-gTop).toFixed(1)+'" fill="url(#soil)"/>';
+    if(bankVis) out += '<rect y="'+(ytop2-5).toFixed(1)+'" width="'+VW+'" height="6" fill="#4c7a3a" opacity=".9"/>';
+    out += '<polygon points="'+P2([[xc-tw,ytop2],[xc-bw,base],[xc+bw,base],[xc+tw,ytop2]])+'" fill="url(#sky)"/>';
+    var yw = Math.min(y,hb*1.15), tyw = half(yw), yws = base-yw*sc;
+    out += '<polygon points="'+P2([[xc-tyw,yws],[xc-bw,base],[xc+bw,base],[xc+tyw,yws]])+'" fill="url(#wg)" opacity=".95"/><line class="wave" x1="'+(xc-tyw).toFixed(1)+'" x2="'+(xc+tyw).toFixed(1)+'" y1="'+yws.toFixed(1)+'" y2="'+yws.toFixed(1)+'" stroke="#e8f6ff" stroke-width="2"/>';
+    var edg = [[xc-tw,ytop2,xc-bw,base],[xc-bw,base,xc+bw,base],[xc+bw,base,xc+tw,ytop2]];
+    out += matEdges(mat,edg,xc,(Math.max(ytop2,0)+base)/2,sc,cap2,5);
+    out += '<polyline points="'+P2([[xc-tyw,yws],[xc-bw,base],[xc+bw,base],[xc+tyw,yws]])+'" fill="none" stroke="#ffe08a" stroke-width="2.2" opacity=".9"/>';
+    out += dimV(Math.min(xc+tyw+30,VW-78), yws, base, 'y '+f2(y)+' m', {side:1});
+    if(shape !== 'tri') out += '<line x1="'+(xc-bw)+'" x2="'+(xc+bw)+'" y1="'+(base+16)+'" y2="'+(base+16)+'" stroke="#ffe08a" stroke-width="1.6" marker-start="url(#arr)" marker-end="url(#arr)"/>'+ txt(xc,base+32,'b = '+f2(s.b)+' m',{a:'middle'});
+    if(shape !== 'rect') out += txt(xc-half(hv*0.7)-6,base-hv*0.7*sc,'z = '+f2(s.z).replace(/\.?0+$/,''),{a:'end',s:12,c:'#ffd6a5'});
+    out += txt(xc, yws-8, 'T = '+f2(o.T)+' m', {a:'middle', s:11, c:'#bfe7ff'});
+    if(bankVis) out += '<line x1="'+(xc-tw-34)+'" x2="'+(xc-tw)+'" y1="'+ytop2.toFixed(1)+'" y2="'+ytop2.toFixed(1)+'" stroke="'+(o.over ? '#ff8a80' : '#e9d9a6')+'" stroke-dasharray="5 4" stroke-width="1.5"/>'+txt(xc-tw-38,ytop2+4,T.bankL+' '+f2(hb),{a:'end',s:11,c:o.over ? '#ff8a80' : '#e9d9a6'});
+    else out += txt(VW-12,20,'↑ '+T.bankL+' '+f2(hb)+' m',{a:'end',s:12,c:'#e9d9a6'});
+    if(o.over) out += txt(xc,44,T.msg.over,{a:'middle',c:'#ff8a80',s:13});
+  }
+  out += txt(12,20,T.mats[mat]+' · n = '+s.n.toFixed(3),{s:13,c:'#ffffff'});
+  out += '</svg>';
+  return out;
+}
+
+/* ---------- charts ---------- */
+function niceMax(v){ if(!(v > 0)) return 1; var e = Math.pow(10,Math.floor(Math.log10(v))), m = v/e; return (m <= 1 ? 1 : (m <= 2 ? 2 : (m <= 2.5 ? 2.5 : (m <= 5 ? 5 : 10))))*e; }
+function tickFmt(v){ return v >= 100 ? v.toFixed(0) : (v >= 10 ? v.toFixed(0) : (v >= 1 ? v.toFixed(1) : v.toFixed(2))).replace(/\.0+$/,''); }
+function chartSVG(o){
+  var W = 320, H = 170, l = 38, r = 10, t = 10, b = 30, i;
+  var xm = 0, ym = 0;
+  o.curves.forEach(function(c){ c.pts.forEach(function(p){ if(p[0] > xm) xm = p[0]; if(p[1] > ym) ym = p[1]; }); });
+  if(o.xmax) xm = Math.max(xm,o.xmax); if(o.ymax) ym = Math.max(ym,o.ymax);
+  xm = niceMax(xm*1.02); ym = niceMax(ym*1.02);
+  var X = function(v){ return l + v/xm*(W-l-r); }, Yc = function(v){ return H-b - v/ym*(H-b-t); };
+  var s = '';
+  for(i = 0; i <= 4; i++){
+    var gx = xm*i/4, gy = ym*i/4;
+    s += '<line x1="'+X(gx)+'" x2="'+X(gx)+'" y1="'+t+'" y2="'+(H-b)+'" stroke="currentColor" stroke-opacity="'+(i === 0 ? 0.5 : 0.13)+'"/><text x="'+X(gx)+'" y="'+(H-b+12)+'" text-anchor="middle">'+tickFmt(gx)+'</text>';
+    s += '<line x1="'+l+'" x2="'+(W-r)+'" y1="'+Yc(gy)+'" y2="'+Yc(gy)+'" stroke="currentColor" stroke-opacity="'+(i === 0 ? 0.5 : 0.13)+'"/><text x="'+(l-4)+'" y="'+(Yc(gy)+3.5)+'" text-anchor="end">'+tickFmt(gy)+'</text>';
+  }
+  s += '<text x="'+((l+W-r)/2)+'" y="'+(H-3)+'" text-anchor="middle">'+o.xl+'</text><text x="9" y="'+((t+H-b)/2)+'" text-anchor="middle" transform="rotate(-90 9 '+((t+H-b)/2)+')">'+o.yl+'</text>';
+  (o.hlines || []).forEach(function(h){
+    if(h.y > ym) return;
+    s += '<line x1="'+l+'" x2="'+(W-r)+'" y1="'+Yc(h.y)+'" y2="'+Yc(h.y)+'" stroke="'+h.c+'" stroke-dasharray="4 3" stroke-width="1.2"/><text x="'+(W-r-2)+'" y="'+(Yc(h.y)-3)+'" text-anchor="end" style="fill:'+h.c+'">'+h.t+'</text>';
+  });
+  o.curves.forEach(function(c){
+    var pts = c.pts.map(function(p){ return X(p[0]).toFixed(1)+','+Yc(p[1]).toFixed(1); }).join(' ');
+    s += '<polyline points="'+pts+'" fill="none" stroke="'+c.col+'" stroke-width="'+(c.w || 2)+'"'+(c.dash ? ' stroke-dasharray="'+c.dash+'"' : '')+' stroke-linejoin="round"/>';
+  });
+  (o.marks || []).forEach(function(m){
+    s += '<circle cx="'+X(m.x).toFixed(1)+'" cy="'+Yc(m.y).toFixed(1)+'" r="5" fill="'+(m.hollow ? 'none' : m.col)+'" stroke="'+m.col+'" stroke-width="2"/>';
+    if(m.t) s += '<text x="'+(X(m.x)+8).toFixed(1)+'" y="'+(Yc(m.y)-6).toFixed(1)+'" style="fill:'+m.col+'">'+m.t+'</text>';
+  });
+  return s;
+}
+
+/* ================= UI ================= */
+var $ = function(s,r){ return (r || document).querySelector(s); };
+var lang = 'en';
+try{
+  var sv0 = localStorage.getItem('hyd-lang');
+  if(sv0 === 'en' || sv0 === 'zh') lang = sv0; else if((navigator.language||'').toLowerCase().indexOf('zh') === 0) lang = 'zh';
+}catch(e){ if((navigator.language||'').toLowerCase().indexOf('zh') === 0) lang = 'zh'; }
+function tx(){ return T[lang]; }
+
+var S = {tab:0, shape:'trap', b:3, z:1.5, D:1.2, S0:2, n:0.030, d50:30, bank:2.5, mode:'depth', y:0.9, Qs:3,
+  mat:'grass', st:'gate', Q:6, B:5, a:0.4, Cc:0.61, P:1, L:5, theta:90, Lc:2, Cd:0.9, C:2.2, Hd:1.5, k:0.5, twAuto:true, tw:1};
+var TYPE_DEF = {
+  gate:{Q:6,B:5,a:0.4,bank:4}, sharp:{Q:2,B:4,P:1,L:4,bank:3}, vnotch:{Q:0.05,B:1.5,P:0.4,theta:90,bank:1.5},
+  broad:{Q:8,B:6,P:1,Lc:2,Cd:0.9,bank:3.5}, check:{Q:3,B:5,P:1.2,Lc:0.8,Cd:0.85,k:0.5,bank:3}, ogee:{Q:60,B:15,P:6,Hd:1.5,C:2.2,bank:12}
+};
+var TYPE_KEYS = {
+  gate:['Q','B','a','Cc'], sharp:['Q','B','P','L'], vnotch:['Q','B','P','theta'], broad:['Q','B','P','Lc','Cd'],
+  check:['Q','B','P','Lc','Cd','k'], ogee:['Q','B','P','Hd','C']
+};
+function sig(v){ return v >= 100 ? String(Math.round(v)) : (v >= 10 ? v.toFixed(1) : (v >= 1 ? v.toFixed(2) : v.toFixed(3))); }
+var SD = {
+  b:{min:0.3,max:30,step:0.1,fmt:function(v){ return v.toFixed(1)+' m'; }},
+  z:{min:0,max:5,step:0.05,fmt:function(v){ return v.toFixed(2); }},
+  D:{min:0.2,max:4,step:0.05,fmt:function(v){ return v.toFixed(2)+' m'; }},
+  S0:{min:0.05,max:100,log:true,fmt:function(v){ return sig(v)+' ‰'; }},
+  n:{min:0.01,max:0.1,step:0.001,fmt:function(v){ return v.toFixed(3); }},
+  d50:{min:1,max:500,log:true,fmt:function(v){ return sig(v)+' mm'; }},
+  bank:{min:0.3,max:12,step:0.1,fmt:function(v){ return v.toFixed(1)+' m'; }},
+  y:{min:0.02,max:5,step:0.01,fmt:function(v){ return v.toFixed(2)+' m'; }},
+  Qs:{min:0.01,max:1000,log:true,fmt:function(v){ return sig(v)+' m³/s'; }},
+  Q:{min:0.01,max:1000,log:true,fmt:function(v){ return sig(v)+' m³/s'; }},
+  B:{min:0.5,max:60,step:0.1,fmt:function(v){ return v.toFixed(1)+' m'; }},
+  a:{min:0.05,max:6,step:0.01,fmt:function(v){ return v.toFixed(2)+' m'; }},
+  Cc:{min:0.58,max:0.7,step:0.005,fmt:function(v){ return v.toFixed(3); }},
+  P:{min:0.1,max:10,step:0.05,fmt:function(v){ return v.toFixed(2)+' m'; }},
+  L:{min:0.2,max:60,step:0.05,fmt:function(v){ return v.toFixed(2)+' m'; }},
+  theta:{min:20,max:120,step:1,fmt:function(v){ return v+'°'; }},
+  Lc:{min:0.2,max:10,step:0.05,fmt:function(v){ return v.toFixed(2)+' m'; }},
+  Cd:{min:0.7,max:1,step:0.01,fmt:function(v){ return v.toFixed(2); }},
+  C:{min:1.7,max:2.4,step:0.01,fmt:function(v){ return v.toFixed(2); }},
+  Hd:{min:0.2,max:6,step:0.05,fmt:function(v){ return v.toFixed(2)+' m'; }},
+  k:{min:0.3,max:0.8,step:0.05,fmt:function(v){ return Math.round(v*100)+'%'; }},
+  tw:{min:0.05,max:15,step:0.05,fmt:function(v){ return v.toFixed(2)+' m'; }}
+};
+function sdOf(k){
+  var d = {}, b = SD[k], i; for(i in b) d[i] = b[i];
+  if(k === 'P' && S.tab === 1 && S.st === 'ogee') d.max = 20;
+  if(k === 'P' && S.tab === 1 && S.st === 'check') d.max = 4;
+  if(k === 'z' && S.shape === 'tri') d.min = 0.25;
+  if(k === 'L') d.max = S.B;
+  if(k === 'y') d.max = S.shape === 'circ' ? S.D : S.bank;
+  if(k === 'Cd' && S.st === 'check') d.min = 0.6;
+  if(k === 'Q' && S.tab === 1 && S.st === 'vnotch'){ d.min = 0.005; d.max = 10; }
+  return d;
+}
+function readSl(k,el){
+  var d = sdOf(k), v;
+  if(d.log) v = Number((d.min*Math.pow(d.max/d.min,el.value/1000)).toPrecision(3)); else v = Number(el.value);
+  return v;
+}
+function posOf(k,v){ var d = sdOf(k); return d.log ? 1000*Math.log(v/d.min)/Math.log(d.max/d.min) : v; }
+function buildSliders(el,keys){
+  var h = '';
+  keys.forEach(function(k){
+    var d = sdOf(k);
+    h += '<div class="row"><label for="sl-'+k+'"><span data-lab="'+k+'"></span><output id="o-'+k+'"></output></label>'
+      + '<input id="sl-'+k+'" type="range" data-k="'+k+'" min="'+(d.log ? 0 : d.min)+'" max="'+(d.log ? 1000 : d.max)+'" step="'+(d.log ? 1 : d.step)+'"></div>';
+  });
+  el.innerHTML = h;
+}
+function syncSliders(){
+  document.querySelectorAll('input[type=range][data-k]').forEach(function(el){
+    var k = el.dataset.k, d = sdOf(k);
+    if(!d.log){ el.min = d.min; el.max = d.max; }
+    if(S[k] > d.max && !d.log) S[k] = d.max;
+    if(S[k] < d.min && !d.log) S[k] = d.min;
+    el.value = posOf(k,S[k]);
+    var row = el.parentNode, out = row.querySelector('output'); if(out) out.textContent = d.fmt(S[k]);
+    var lab = row.querySelector('[data-lab]'); if(lab) lab.textContent = tx().sl[k];
+  });
+}
+function chKeys(){
+  var k = S.shape === 'circ' ? ['D'] : (S.shape === 'rect' ? ['b'] : (S.shape === 'trap' ? ['b','z'] : ['z']));
+  k = k.concat(['S0','n','d50']); if(S.shape !== 'circ') k.push('bank');
+  return k;
+}
+function chKeys2(){ return [S.mode === 'depth' ? 'y' : 'Qs']; }
+function stKeys(){ return TYPE_KEYS[S.st].concat(['S0','n','bank']); }
+
+function matChips(){
+  var t = tx(), h = MATS.map(function(m){
+    return '<button type="button" data-mat="'+m.k+'" aria-pressed="'+(S.mat === m.k)+'"><i style="background:'+m.dot+'"></i>'+t.mats[m.k]+'<b>'+m.n.toFixed(3)+'</b></button>';
+  }).join('');
+  $('#nPre').innerHTML = h + '<button type="button" data-mat="est">'+t.estN+'</button>';
+  $('#stMat').innerHTML = h;
+}
+function setMat(k){ S.mat = k; S.n = matDef(k).n; syncSliders(); matChips(); refresh(); }
+function followN(){
+  if(Math.abs(Math.log(S.n/matDef(S.mat).n)) > 0.25){ var k = matOf(S.n); if(k !== S.mat){ S.mat = k; matChips(); } }
+}
+function buildAll(){
+  var t = tx();
+  buildSliders($('#chSliders'),chKeys()); buildSliders($('#chSliders2'),chKeys2());
+  buildSliders($('#stSliders'),stKeys()); buildSliders($('#stSliders2'),S.twAuto ? [] : ['tw']);
+  $('#shapes').innerHTML = ['rect','trap','tri','circ'].map(function(k){ return '<button type="button" data-shape="'+k+'" aria-pressed="'+(S.shape === k)+'">'+t.shapes[k]+'</button>'; }).join('');
+  $('#nHelp').textContent = t.nHelp; $('#matHelp2').textContent = t.nHelp;
+  matChips();
+  $('#modes').innerHTML = ['depth','flow'].map(function(k){ return '<button type="button" data-mode="'+k+'" aria-pressed="'+(S.mode === k)+'">'+t.modes[k]+'</button>'; }).join('');
+  $('#stTypes').innerHTML = Object.keys(t.st).map(function(k){ return '<button type="button" data-st="'+k+'" aria-pressed="'+(S.st === k)+'">'+t.st[k]+'</button>'; }).join('');
+  $('#tcHead').textContent = t.tc.head;
+  $('#tcMode').innerHTML = [['auto',t.tc.auto],['man',t.tc.man]].map(function(p){ return '<button type="button" data-tc="'+p[0]+'" aria-pressed="'+((p[0] === 'auto') === S.twAuto)+'">'+p[1]+'</button>'; }).join('');
+  $('#tabs').innerHTML = t.tabs.map(function(x,i){ return '<button type="button" data-tab="'+i+'" aria-pressed="'+(i === S.tab)+'">'+x+'</button>'; }).join('');
+  $('#h1').textContent = t.title; $('#sub').textContent = t.sub[S.tab]; document.title = t.title;
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  $('#lang').textContent = lang === 'en' ? '中文' : 'EN';
+  $('#chResH').textContent = t.chResH; $('#stResH').textContent = t.stResH;
+  $('#eyH').textContent = t.eyH; $('#rtH').textContent = t.rtH; $('#hqH').textContent = t.hq;
+  $('#chNSum').textContent = $('#stNSum').textContent = lang === 'zh' ? '这是怎么计算的' : 'How this is calculated';
+  $('#chNBody').innerHTML = t.chN.map(function(x){ return '<p>'+x+'</p>'; }).join('');
+  $('#stNBody').innerHTML = t.stN.map(function(x){ return '<p>'+x+'</p>'; }).join('');
+  $('#credit').textContent = t.credit;
+  ['chCtl','chRes'].forEach(function(id){ $('#'+id).hidden = S.tab !== 0; });
+  ['stCtl','stRes'].forEach(function(id){ $('#'+id).hidden = S.tab !== 1; });
+  syncSliders();
+}
+
+/* ---------- results ---------- */
+function card(label,val,em,cls){ return '<div class="card'+(cls ? ' '+cls : '')+'"><small>'+label+'</small><strong>'+val+'</strong>'+(em ? '<em>'+em+'</em>' : '')+'</div>'; }
+function msgList(el,list){ el.innerHTML = list.slice(0,6).map(function(m){ return '<li class="'+m[0]+'">'+m[1]+'</li>'; }).join(''); }
+function chState(){
+  return {shape:S.shape,b:S.b,z:S.shape === 'tri' ? Math.max(S.z,0.25) : S.z,D:S.D,S0:S.S0,n:S.n,d50:S.d50,bank:S.bank,mode:S.mode,y:S.y,Qset:S.Qs,mat:S.mat};
+}
+function altDepth(shape,p,Q,E,y,yc,ycap){
+  var f = function(yy){ var G = geom(shape,p,yy); return yy + Q*Q/(2*g*G.A*G.A) - E; };
+  if(y > yc){ if(f(yc*0.9999) > 0) return null; return bisect(f,1e-5,yc*0.9999); }
+  return bisect(f,yc,Math.max(E,yc*1.01)*1.0);
+}
+
+function renderChannel(){
+  var t = tx(), s = chState(), o = calcChannel(s), p = {b:s.b,z:s.z,D:s.D};
+  var svgStr = chanSVG(o,s,t);
+  var fr = o.full ? t.ccx.full : (o.Fr < 0.95 ? t.ccx.Fr[0] : (o.Fr < 1.05 ? t.ccx.Fr[1] : t.ccx.Fr[2]));
+  var frCls = o.full ? '' : (o.Fr < 0.95 ? 'ok' : (o.Fr < 1.05 ? 'warn' : 'warn'));
+  var move = o.tau0 > o.tauC;
+  var h = card(t.cc[0],sig(o.Q)+' m³/s','') + card(t.cc[1],sig(o.V)+' m/s','')
+    + card(t.cc[2],o.full ? '—' : o.Fr.toFixed(2),fr,frCls)
+    + card(t.cc[3],sig(o.y)+' m','') + card(t.cc[4],o.yc === null ? '—' : sig(o.yc)+' m','')
+    + card(t.cc[5],sig(o.E)+' m','') + card(t.cc[6],sig(o.A)+' m²','') + card(t.cc[7],sig(o.P)+' m','')
+    + card(t.cc[8],sig(o.R)+' m','') + card(t.cc[9],o.T > 0 ? sig(o.T)+' m' : '—','')
+    + card(t.cc[10],sig(o.tau0)+' Pa',t.tauSub(sig(o.tauC))+' · '+(move ? t.bed.move : t.bed.ok),move ? 'warn' : 'ok')
+    + card(t.cc[11],sig(o.freeboard)+' m','',o.freeboard < 0 ? 'bad' : '');
+  $('#chCards').innerHTML = h;
+  var m = [];
+  if(o.exceeds) m.push(['bad',t.msg.exceeds]); else if(o.full) m.push(['warn',t.msg.full]);
+  if(o.over) m.push(['bad',t.msg.over]);
+  if(!o.full){ m.push(o.Fr < 0.95 ? ['ok',t.msg.sub] : (o.Fr < 1.05 ? ['warn',t.msg.crit] : ['warn',t.msg.sup])); }
+  if(o.Sc !== null) m.push(['',o.S0 < o.Sc ? t.msg.mild : t.msg.steep]);
+  m.push(move ? ['warn',t.msg.erode] : ['ok',t.msg.stable]);
+  if(s.shape === 'circ') m.push(['',t.msg.circ]);
+  m.unshift(['',t.mats[S.mat]+': '+t.matMsg[S.mat]]);
+  if(s.n >= 0.05) m.push(['',t.msg.nHi]);
+  msgList($('#chMsgs'),m);
+  // charts
+  var ymaxC = s.shape === 'circ' ? s.D : s.bank, N = 90, i, ey = [], rt = [];
+  for(i = 1; i <= N; i++){
+    var yy = ymaxC*i/N, G = geom(s.shape,p,yy);
+    if(G.A > 0) ey.push([yy + o.Q*o.Q/(2*g*G.A*G.A), yy]);
+    rt.push([manningQ(s.shape,p,yy,s.n,o.S0), yy]);
+  }
+  var Emx = Math.max(o.E*2.6,(o.yc ? 1.5*o.yc*2.4 : 0), ymaxC*0.4);
+  var eyc = ey.filter(function(q){ return q[0] <= Emx; });
+  var marks = [{x:o.E,y:o.y,col:'#e0452f',t:'y'}];
+  if(o.yc !== null){
+    var alt = altDepth(s.shape,p,o.Q,o.E,o.y,o.yc); var Gc = geom(s.shape,p,o.yc);
+    marks.push({x:o.yc + o.Q*o.Q/(2*g*Gc.A*Gc.A),y:o.yc,col:'#2f9e6d',hollow:true,t:'yc'});
+    if(alt !== null && isFinite(alt)) marks.push({x:o.E,y:alt,col:'#e0452f',hollow:true});
+  }
+  $('#eyChart').innerHTML = chartSVG({xl:'E (m)',yl:'y (m)',curves:[{pts:eyc,col:'#2b7fc0',w:2.4},{pts:[[0,0],[Emx,Emx]],col:'#8899aa',dash:'4 3',w:1.2}],marks:marks,xmax:Emx,ymax:ymaxC});
+  var rtm = [{x:o.Q,y:o.y,col:'#e0452f'}];
+  $('#rtChart').innerHTML = chartSVG({xl:'Q (m³/s)',yl:'y (m)',curves:[{pts:rt,col:'#2b7fc0',w:2.4}],marks:rtm,ymax:ymaxC,hlines:s.shape === 'circ' ? [] : [{y:s.bank,c:'#b45309',t:t.bankL}]});
+  $('#view').innerHTML = svgStr;
+}
+
+function renderStruct(){
+  var t = tx(), s = {}, k; for(k in S) s[k] = S[k];
+  s.front = t.front; s.twMan = S.tw;
+  var r = calcStruct(s);
+  var svgStr = sideSVG(r,s,t);
+  var st = S.st, isGate = st === 'gate', cards = '', m = [];
+  var jumpTxt = r.jump ? t.jumpState[r.jump.state] : '—';
+  var jCls = r.jump ? (r.jump.state === 'swept' ? 'bad' : (r.jump.state === 'toe' ? 'ok' : 'warn')) : '';
+  var state = isGate ? (r.ctrl === false ? t.states.gateFree : (r.submerged ? t.states.sub : t.states.free)) : (r.sub ? t.states.sub : t.states.free);
+  var stCls = (isGate && (r.ctrl === false || r.submerged)) || r.sub ? 'warn' : 'ok';
+  cards += card(t.sc.y1,sig(r.y1)+' m','yₙ = '+sig(r.yn)+' m');
+  cards += isGate ? card(t.sc.y2,sig(r.yt)+' m','a = '+sig(S.a)+' m') : card(t.sc.H,sig(r.H)+' m','H/P = '+sig(r.H/S.P));
+  cards += card(t.sc.afflux,(r.afflux >= 0 ? '+' : '')+sig(r.afflux)+' m','');
+  cards += card(t.sc.state,state,'',stCls);
+  if(r.jump){
+    cards += card(t.sc.yt,sig(r.yt)+' m','Fr = '+r.jump.Fr.toFixed(1)+' · '+t.jumpType[r.jump.type]);
+    cards += card(t.sc.jump,jumpTxt,'y₂ = '+sig(r.jump.y2)+' m · tw = '+sig(r.ytw)+' m',jCls);
+    cards += card(t.sc.loss,r.ElossPct.toFixed(0)+' %',sig(r.Eloss)+' m',''); cards += card(t.sc.Lj,'≈ '+sig(r.jump.Lj)+' m','6 · y₂');
+  } else { cards += card(t.sc.yt,'—','') + card(t.sc.jump,'—','') + card(t.sc.loss,'—','') + card(t.sc.Lj,'—',''); }
+  cards += card(t.sc.bw,r.bw ? '≈ '+(r.bw.L >= 1000 ? (r.bw.L/1000).toFixed(1)+' km' : Math.round(r.bw.L)+' m') : '—','');
+  cards += card(t.sc.fb,sig(r.freeboard)+' m','',r.freeboard < 0 ? 'bad' : '');
+  if(st === 'check') cards += card(t.sc.spacing,'≈ '+sig(r.spacing)+' m','') + card(t.sc.wedge,'≈ '+sig(r.wedge)+' m³','');
+  if(st === 'ogee') cards += card(t.sc.He,sig(r.HdRatio),'He = '+sig(r.He)+' m',r.HdRatio > 1 ? 'warn' : '');
+  if(st === 'vnotch') cards += card(t.sc.notch,sig(r.notchTop)+' m','B = '+sig(S.B)+' m',r.notchTop > S.B ? 'bad' : '');
+  $('#stCards').innerHTML = cards;
+  if(isGate){
+    if(r.ctrl === false) m.push(['warn',t.sm.gateFree]);
+    if(r.warn.indexOf('gateOut') > -1) m.push(['warn',t.sm.gateOut]);
+    if(r.submerged) m.push(['warn',t.sm.gateSub]);
+  } else {
+    if(r.sub) m.push(['warn',t.sm.subWeir]);
+    r.warn.forEach(function(w){ if(t.sm[w]) m.push(['warn',t.sm[w]]); });
+    if(st === 'ogee' && r.HdRatio > 1) m.push(['warn',t.sm.ogeeHi]);
+  }
+  if(r.over) m.push(['bad',t.sm.over]);
+  if(r.steep) m.push(['warn',t.sm.steep]);
+  if(r.jump && !(isGate && r.ctrl === false)) m.push([jCls,t.sm[r.jump.state]]);
+  if(st === 'check') m.push(['',t.sm.check]);
+  m.push(['',t.mats[S.mat]+': '+t.matMsg[S.mat]]);
+  msgList($('#stMsgs'),m);
+  // head-discharge chart
+  var pts = [], i;
+  for(i = 1; i <= 26; i++){ var q = S.Q*(0.1 + 1.9*i/26), s2 = {}; for(k in s) s2[k] = s[k]; s2.Q = q; s2.noBw = true; var rr = calcStruct(s2); pts.push([q,rr.y1]); }
+  var hl = [{y:S.bank,c:'#b45309',t:t.bankL}];
+  if(isGate) hl.push({y:S.a,c:'#2f9e6d',t:t.lip}); else hl.push({y:S.P,c:'#2f9e6d',t:t.crest});
+  $('#hqChart').innerHTML = chartSVG({xl:t.xl,yl:t.yl,curves:[{pts:pts,col:'#2b7fc0',w:2.4}],marks:[{x:S.Q,y:r.y1,col:'#e0452f'}],hlines:hl});
+  $('#view').innerHTML = svgStr;
+  window.__lastStruct = r;
+}
+function refresh(){
+  if(S.tab === 0) renderChannel(); else renderStruct();
+  $('#view').setAttribute('aria-label',tx().alt);
+}
+function fullRender(){ buildAll(); refresh(); }
+
+/* ---------- events ---------- */
+document.addEventListener('input',function(e){
+  var el = e.target; if(!el.dataset || !el.dataset.k) return;
+  var k = el.dataset.k; S[k] = readSl(k,el);
+  if(k === 'B' && S.L > S.B) S.L = S.B;
+  if(k === 'n') followN();
+  syncSliders(); refresh();
+});
+$('#shapes').addEventListener('click',function(e){
+  var b = e.target.closest('button'); if(!b) return; S.shape = b.dataset.shape;
+  if(S.shape === 'tri' && S.z < 0.25) S.z = 1;
+  if(S.shape === 'circ' && S.y > S.D) S.y = S.D*0.5;
+  fullRender();
+});
+function matClick(e){
+  var b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.mat === 'est'){ S.n = clamp(Number((Math.pow(S.d50/1000,1/6)/21.1).toFixed(3)),0.01,0.1); S.mat = matOf(S.n); syncSliders(); matChips(); refresh(); }
+  else setMat(b.dataset.mat);
+}
+$('#nPre').addEventListener('click',matClick); $('#stMat').addEventListener('click',matClick);
+$('#modes').addEventListener('click',function(e){
+  var b = e.target.closest('button'); if(!b) return; S.mode = b.dataset.mode; fullRender();
+});
+$('#stTypes').addEventListener('click',function(e){
+  var b = e.target.closest('button'); if(!b) return; S.st = b.dataset.st;
+  var d = TYPE_DEF[S.st], k; for(k in d) S[k] = d[k];
+  if(S.st === 'sharp') S.L = S.B;
+  fullRender();
+});
+$('#tcMode').addEventListener('click',function(e){
+  var b = e.target.closest('button'); if(!b) return; S.twAuto = b.dataset.tc === 'auto';
+  if(!S.twAuto){ var yn = rectNormal(S.Q,S.B,S.n,S.S0/1000); S.tw = clamp(Number(yn.toPrecision(2)),0.05,15); }
+  fullRender();
+});
+$('#tabs').addEventListener('click',function(e){
+  var b = e.target.closest('button'); if(!b) return; S.tab = +b.dataset.tab; fullRender();
+});
+$('#lang').addEventListener('click',function(){
+  lang = lang === 'en' ? 'zh' : 'en';
+  try{ localStorage.setItem('hyd-lang',lang); }catch(e){}
+  fullRender();
+});
+window.__hyd = {geom:geom,manningQ:manningQ,normalDepth:normalDepth,criticalDepth:criticalDepth,calcChannel:calcChannel,calcStruct:calcStruct,rectNormal:rectNormal,conjugate:conjugate,specE:specE,S:S};
+fullRender();
+
+})();
+</script>
+</body>
+</html>

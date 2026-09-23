@@ -1,0 +1,7 @@
+/* Manual Experiment 2, pp.14–22: specific energy relative to bed; alpha=1, SI.
+   Energy minimum and alternate depths are for a rectangular section at fixed Q. */
+(function(root){const g=9.81;function validate(Q,b){if(!Number.isFinite(Q)||!Number.isFinite(b)||Q<=0||b<=0)throw Error('Positive finite Q and width required')}
+function evaluate(Q,b,y){validate(Q,b);if(!Number.isFinite(y)||y<=0)throw Error('Positive finite depth required');let A=b*y,V=Q/A,head=V*V/(2*g),yc=Math.cbrt(Q*Q/(g*b*b));return {Q,b,y,A,V,head,E:y+head,yc,Emin:1.5*yc,Fr:V/Math.sqrt(g*y)}}
+function observations({Q,b=.3,S,y1,y2,y3}){if(![S,y1,y2,y3].every(Number.isFinite)||S<0||[y1,y2,y3].some(y=>y<=0||y>.45))throw Error('Use nonnegative slope and depths between 0 and 0.45 m.');return {...evaluate(Q,b,(y1+y2+y3)/3),S,y1,y2,y3,spread:Math.max(y1,y2,y3)-Math.min(y1,y2,y3)}}
+function alternate(Q,b,E){validate(Q,b);if(!Number.isFinite(E)||E<0)throw Error('Finite nonnegative energy required');let yc=Math.cbrt(Q*Q/(g*b*b)),Emin=1.5*yc;if(E<Emin-1e-12)return {yc,Emin,depths:[]};if(Math.abs(E-Emin)<=1e-12)return {yc,Emin,depths:[yc]};let a=yc*1e-12,z=yc;for(let i=0;i<90;i++){let m=(a+z)/2;if(evaluate(Q,b,m).E>E)a=m;else z=m}let low=(a+z)/2;a=yc;z=E;for(let i=0;i<90;i++){let m=(a+z)/2;if(evaluate(Q,b,m).E<E)a=m;else z=m}return {yc,Emin,depths:[low,(a+z)/2]}}
+const api={evaluate,observations,alternate};root.EnergyLab=api;if(typeof module!=='undefined')module.exports=api})(typeof window!=='undefined'?window:globalThis);
